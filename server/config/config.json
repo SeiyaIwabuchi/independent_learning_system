@@ -1,0 +1,24 @@
+{
+  "development": {
+    "username": "webappuser",
+    "password": "cE%4U_*y",
+    "database": "ils",
+    "host": "192.168.1.124",
+    "port":3312,
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "webappuser",
+    "password": "cE%4U_*y",
+    "database": "ils",
+    "host": "192.168.1.124",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "webappuser",
+    "password": "cE%4U_*y",
+    "database": "ils",
+    "host": "192.168.1.124",
+    "dialect": "mysql"
+  }
+}
