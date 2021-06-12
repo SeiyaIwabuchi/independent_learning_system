@@ -1,0 +1,17 @@
+https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering
+- getStaticProps
+    - 関数
+    - ビルドされるときに実行される。
+    - 同じファイルにあるReactコンポーネントに引数で渡される。
+    - 静的なページ用
+    - データの変化が影響しない部分に使える。
+- getStaticPaths
+    - 関数
+    - ビルド時に実行される
+    - 指定されたすべてのパスを事前にレンダリングする。
+    - 例えば商品の数だけ商品紹介ページを作成するときに使う
+- getServerSideProps
+    - 関数
+    - リクエストのたびに実行される
+    - リクエストがあったときページの事前レンダリングを行う
+    - リクエストごとに事前レンダリングする。
