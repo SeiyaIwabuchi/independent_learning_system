@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
+const t_users = require("./t_users"); //明示的にインポートする。ビルド時に無視されないために必要
 
 let sequelize;
 if (config.use_env_variable) {
@@ -15,15 +15,22 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
+// fs
+//   .readdirSync(__dirname)
+//   .filter(file => {
+//     console.log(file); // ここの表示がLogin.jsとなる。まず、webpackするときのディレクトリが違う。んだと思う
+//     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+//   })
+//   .forEach(file => {
+    
+//     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+//     db[model.name] = model;
+//   });
+
+//dbオブジェクトに手動で追加
+const db = {
+  t_users : t_users(sequelize, Sequelize.DataTypes),
+};
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
