@@ -5,16 +5,16 @@ import { useState } from "react";
 
 interface IProps {
     appbar: {
-        title: string,
-        leftButton: JSX.Element,
-        rightButton: JSX.Element
+        title : string,
+        leftButton? : JSX.Element,
+        rightButton? : JSX.Element
     },
     snackbar:{
-        state:boolean,
-        setState:React.Dispatch<React.SetStateAction<boolean>>,
-        msg:string
+        state? : boolean,
+        setState? : React.Dispatch<React.SetStateAction<boolean>>,
+        msg? : string
     },
-    children:JSX.Element
+    children:JSX.Element | JSX.Element[]
 }
 
 const OuterFrame = (props: IProps) => {
@@ -29,13 +29,15 @@ const OuterFrame = (props: IProps) => {
                     {props.appbar.rightButton}
                 </Toolbar>
             </AppBar>
-            <div style={{marginTop:"60px"}}>
+            <div style={{marginTop:"80px"}}>
                 {props.children}
             </div>
             <Snackbar
                 anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
                 open={props.snackbar.state}
-                onClose={ () => {props.snackbar.setState(false)}}
+                onClose={ () => {
+                    if(props.snackbar.setState != undefined) props.snackbar.setState(false)
+                }}
                 message={props.snackbar.msg}
                 key={"bottomleft"}
             />
