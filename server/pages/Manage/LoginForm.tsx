@@ -1,14 +1,19 @@
 import { Typography, Button, InputLabel, OutlinedInput, FormControl } from "@material-ui/core";
 import React, { useState } from "react";
-import useSWR, { mutate } from "swr";
 import OuterFrame from "../../components/OuterFrame";
 import router from "next/router";
+import Form from "../../components/Form";
+import LoginFormSchema_ from "../../form_schemas/LoginFormSchema.json";
+import { LoginFormResponseShcema } from "../../form_schemas/ts/LoginFormShcema";
+import { SessionId } from "../../query_param_shemas/SessionId";
+
+const LoginFormSchema : any = LoginFormSchema_.definitions.LoginFormShcema;
 
 let LoginForm = () => {
     const appbar = {
         title: "ログイン",
         rightButton: <></>,
-        leftButton: <></>
+        leftButton: <Button onClick={() => {router.back()}}>戻る</Button>
     }
     const [snackbarState,setSnackbarState] = useState(false);
     const [snackbarMsg,setSnackbarMsg] = useState("");
@@ -19,49 +24,25 @@ let LoginForm = () => {
         setState:setSnackbarState,
         msg:snackbarMsg
     }
-    const loginUser = async (event:React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        await fetch("/api/Login",{
-            method:"POST",
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            body: JSON.stringify({
-                userName:userName,
-                userPassword:userPassword
-            })
-        }).then( res => res.json())
-        .then( (res:{sessionId:string}) => {
-            localStorage.setItem("sessionId",res.sessionId);
-            setSnackbarMsg(`Hello ${userName}`);
-            setSnackbarState(true);
-            router.push("/Manage/Top");
-        })
-        .catch( err => {
-            console.log(`${err}`);
-            setSnackbarMsg(`${err}`);
-            setSnackbarState(true);
-        });
-    };
+    const [formData, setFormData] = useState({});
     return (
             <OuterFrame appbar={appbar} snackbar={snackbar}>
                 <div>
-                    <form onSubmit={loginUser}>
-                    {/* <form action="/Manage/Login" method="post"> */}
-                        <Typography variant="h4">
-                            ログイン
-                        </Typography>
-                        <FormControl variant="outlined">
-                            <InputLabel htmlFor="component-outlined">ユーザ名</InputLabel>
-                            <OutlinedInput type="text" name="userName" value={userName} onChange={event => setUserName(event.target.value)} required/>
-                        </FormControl>
-                        <FormControl variant="outlined">
-                            <InputLabel htmlFor="component-outlined">パスワード</InputLabel>
-                            <OutlinedInput type="password" name="userPassword" value={userPassword} onChange={event => setUserPassword(event.target.value)} required/>
-                        </FormControl>
-
-                        <Button type="submit" variant="contained" color="primary">ログイン</Button>
-                    </form>
+                    <Form 
+                        schema={LoginFormSchema} 
+                        dataDest="/api/Login"
+                        onApiRes={ (json : LoginFormResponseShcema) => {
+                            if(json.sessionId != "invalid user"){
+                                localStorage.setItem("sessionId",json.sessionId);
+                                router.push(`/Manage/Top?${SessionId(json)}`);
+                            }else{
+                                setSnackbarMsg("ログインに失敗しました。ユーザ名またはパスワードが間違っています。");
+                                setSnackbarState(true);                            }
+                        }}
+                        onApiError={(err) => {
+                            console.log(err);
+                        }}
+                    />
                 </div>
             </OuterFrame>
     )
