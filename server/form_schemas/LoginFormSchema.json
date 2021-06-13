@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "LoginFormShcema": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "title": "ユーザ名"
+                },
+                "password": {
+                    "type": "string",
+                    "title": "パスワード"
+                }
+            },
+            "required": [
+                "name",
+                "password"
+            ]
+        }
+    }
+}
