@@ -3,7 +3,8 @@ import { AjvError, ErrorSchema, FormProps, FormValidation, IChangeEvent, UiSchem
 import Form_ from "@rjsf/material-ui";
 import router from "next/router";
 import React, { useState } from "react";
-import { useEffect } from "react";
+
+
 interface IProps{
     action? : string,
     method? : string,
@@ -19,7 +20,9 @@ interface IProps{
     onApiRes? : (json : any) => any,
     onApiError? : (err : any) => any,
     validate? : (formData: any, errors: FormValidation) => FormValidation,
-    transformErrors? : (errors: AjvError[]) => AjvError[]
+    transformErrors? : (errors: AjvError[]) => AjvError[],
+    name? : string,
+    id? : string,
     children? : JSX.Element[] | JSX.Element,
 }
 
@@ -73,35 +76,43 @@ const Form = (props : IProps) => {
                 }
             }
             formData={
-                props.formData == undefined ?
-                formData : props.formData
+                props.formData || formData
             }
             autoComplete={props.autoComplete}
             validate={props.validate}
             transformErrors={
-                props.transformErrors == undefined ?
-                transformErrors : props.transformErrors
+                props.transformErrors || transformErrors
             }
             liveValidate
             showErrorList={false}
+            name = {props.name}
+            method = {props.method}
+            id = {props.id}
         >
             {props.children}
-            <Button 
-                type="submit" 
-                variant="contained" 
-                color="primary"
-                onClick={
-                    props.onSubmit == undefined ? 
-                    onSubmit : props.onSubmit
-                }
-                disabled={
-                    !(errors_.length == 0)
-                }
-                >{
-                props.submitButtonName == undefined ?
-                "送信" :
-                props.submitButtonName
+            <div　
+            style={{
+                display:"flex",
+                justifyContent:"center",
+                marginTop:"30px",
+            }}>
+                <Button 
+                    type="submit" 
+                    variant="contained" 
+                    color="primary"
+                    onClick={
+                        props.onSubmit || onSubmit
+                    }
+                    disabled={
+                        !(errors_.length == 0)
+                    }
+                    style={{
+                        width:"100%"
+                    }}
+                    >{
+                    props.submitButtonName || "送信"
             }</Button>
+            </div>
         </Form_>
     );
 };

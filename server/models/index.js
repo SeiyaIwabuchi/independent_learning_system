@@ -4,9 +4,15 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.DEV_ENV || 'school';
+console.log(env);
 const config = require(__dirname + '/../config/config.json')[env];
-const t_users = require("./t_users"); //明示的にインポートする。ビルド時に無視されないために必要
+
+//dbオブジェクトに手動で追加
+const db = {
+  t_users : require("./t_users")(sequelize, Sequelize.DataTypes),
+  t_login_history : require("./t_login_history")(sequelize, Sequelize.DataTypes)
+};
 
 let sequelize;
 if (config.use_env_variable) {
@@ -27,10 +33,7 @@ if (config.use_env_variable) {
 //     db[model.name] = model;
 //   });
 
-//dbオブジェクトに手動で追加
-const db = {
-  t_users : t_users(sequelize, Sequelize.DataTypes),
-};
+
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

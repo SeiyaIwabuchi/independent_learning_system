@@ -26,10 +26,14 @@ const OuterFrame = (props: IProps) => {
                     <Typography variant="h6" >
                         {props.appbar.title}
                     </Typography>
-                    {props.appbar.rightButton}
+                    <div style={{marginLeft:"auto",marginRight:"0px"}}>{props.appbar.rightButton}</div>
                 </Toolbar>
             </AppBar>
-            <div style={{marginTop:"80px"}}>
+            <div style={{
+                marginTop:"80px",
+                marginRight:"10px",
+                marginLeft : "10px"
+                }}>
                 {props.children}
             </div>
             <Snackbar

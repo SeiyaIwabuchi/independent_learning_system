@@ -1,29 +1,27 @@
 {
     "version": "2.0.0",
     "tasks": [
-     {
-       "type": "npm",
-       "script": "build",
-       "path": "./",
-       "group": "build",
-       "problemMatcher": [],
-       "label": "npm: build - nextjs-blog",
-       "detail": "next build"
-     },
-     {
-       "type": "npm",
-       "script": "dev",
-       "path": "./",
-       "problemMatcher": [],
-       "label": "npm: dev - nextjs-blog",
-       "detail": "next dev",
-       "group": {
-         "kind": "build",
-         "isDefault": true
-       },"dependsOn" : [
-         "npm: build - nextjs-blog"
-       ]
-     }
+      {
+        "type": "npm",
+        "script": "build",
+        "path": "${workspaceFolder}",
+        "group": "build",
+        "problemMatcher": [],
+        "label": "npm: build - nextjs-blog",
+        "detail": "next build",
+      },
+      {
+        "type": "npm",
+        "script": "dev",
+        "path": "${workspaceFolder}",
+        "problemMatcher": [],
+        "label": "npm: dev - nextjs-blog",
+        "detail": "next dev",
+        "group": "build",
+        "dependsOn": [
+          "npm: build - nextjs-blog"
+        ],
+      }
     ]
     }
     
