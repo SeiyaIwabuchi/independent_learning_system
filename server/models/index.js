@@ -5,14 +5,7 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.DEV_ENV || 'school';
-console.log(env);
 const config = require(__dirname + '/../config/config.json')[env];
-
-//dbオブジェクトに手動で追加
-const db = {
-  t_users : require("./t_users")(sequelize, Sequelize.DataTypes),
-  t_login_history : require("./t_login_history")(sequelize, Sequelize.DataTypes)
-};
 
 let sequelize;
 if (config.use_env_variable) {
@@ -20,6 +13,13 @@ if (config.use_env_variable) {
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
+
+//dbオブジェクトに手動で追加
+const db = {
+  t_users : require("./t_users")(sequelize, Sequelize.DataTypes),
+  t_login_histories : require("./t_login_histories")(sequelize, Sequelize.DataTypes),
+  t_sessions : require("./t_sessions")(sequelize, Sequelize.DataTypes)
+};
 
 // fs
 //   .readdirSync(__dirname)
@@ -32,8 +32,6 @@ if (config.use_env_variable) {
 //     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
 //     db[model.name] = model;
 //   });
-
-
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
