@@ -3,6 +3,7 @@ import { AjvError, ErrorSchema, FormProps, FormValidation, IChangeEvent, UiSchem
 import Form_ from "@rjsf/material-ui";
 import router from "next/router";
 import React, { useState } from "react";
+import { useEffect } from "react";
 
 
 interface IProps{
@@ -29,11 +30,9 @@ interface IProps{
 let errors_ : any = [""];
 const Form = (props : IProps) => {
     const [formData,setFormData] = useState<any>();
-    const [isValid,setIsvalid] = useState(false);
     const onSubmit = async () => {
         const formData_ = 
-            props.formData == undefined ? 
-            formData : props.formData;
+            props.formData || formData;
         await fetch(props.dataDest,{
             method:"POST",
             headers:{
@@ -45,9 +44,9 @@ const Form = (props : IProps) => {
         .then(props.onApiRes)
         .then( () => {
             if(props.screenTraDest != undefined)
-                router.push(props.screenTraDest,undefined);
+                router.push(props.screenTraDest || "#",undefined);
         })
-        .catch(props.onApiError)
+        .catch(props.onApiError || ((err) => {console.log(err)}))
     };
     const transformErrors = (errors : AjvError[]) => {
         errors_ = errors;
@@ -70,7 +69,6 @@ const Form = (props : IProps) => {
                         props.onChange(event.formData)
                     }
                     if(props.validate != undefined) {
-                        console.log(event);
                         // props.validate(event.formData)
                     }
                 }
