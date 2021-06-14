@@ -15,6 +15,7 @@
     "@material-ui/icons": "^4.11.2",
     "@rjsf/core": "^2.5.1",
     "@rjsf/material-ui": "^2.5.1",
+    "ajv": "^6.12.6",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "next": "^10.2.3",
