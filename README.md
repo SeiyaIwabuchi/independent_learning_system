@@ -35,6 +35,7 @@
 - Nextjs
 - MySQL
 - Sequelize ORM
+- SQLite(学校のPCで開発するとき)
 
 # 画面遷移図
 - 復習時の画面遷移
