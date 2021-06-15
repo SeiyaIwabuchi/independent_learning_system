@@ -1,12 +1,16 @@
-import { Button, IconButton } from "@material-ui/core";
+import { Button, IconButton, Typography } from "@material-ui/core";
 import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import OuterFrame from "../../components/OuterFrame";
-import { ISessionId } from "../../query_param_shemas/SessionId";
+import { ISessionId, SessionId } from "../../query_param_shemas/SessionId";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import router from "next/router";
 import db from "../../models";
 import { useEffect } from "react";
+import ManageTopSwitch from "../../components/ManageTopSwitch";
+import SessionIdValidater from "../../utils/SessionIdValidater";
+import ManageMenuList, { IElemetPorps } from "../../components/ManageMenuList";
+
 
 export const getServerSideProps : GetServerSideProps = async (context) => {
     const sessionId = context.query.sessionId as string;
@@ -15,20 +19,42 @@ export const getServerSideProps : GetServerSideProps = async (context) => {
     const resSessionId = session_model == null ? "Unauthorised" : `${session_model.id}`;
     return{
         props:{
-            sessionId : resSessionId
+            sessionId : await SessionIdValidater(context)
         }
     }
 };
 
+
 const Top = (props : ISessionId) => {
+
     const [snackbarState,setSnackbarState] = useState(false);
     const [snackbarMsg,setSnackbarMsg] = useState("");
     const [timer,setTimer] = useState(3);
+
+    const TopMenuList : IElemetPorps[] = [
+        {
+            primaryText : "教科管理",
+            secondaryText : "教科の変更、追加、削除",
+            destinationURL : `/Manage/Subject?${SessionId({sessionId:props.sessionId})}`,
+        },
+        {
+            primaryText : "問題管理",
+            secondaryText : "問題の変更、追加、削除",
+            destinationURL : `/Manage/Problem?${SessionId({sessionId:props.sessionId})}`,
+        },
+        {
+            primaryText : "管理ユーザの管理",
+            secondaryText : "管理ユーザの変更、追加、削除",
+            destinationURL : `/Manage/User?${SessionId({sessionId:props.sessionId})}`,
+        },
+    ];
+    
     const snackbar = {
         state:snackbarState,
         setState:setSnackbarState,
         msg:snackbarMsg
     }
+
     const onLogout = async () => {
         const sessionId : ISessionId = {sessionId:localStorage.getItem("sessionId") || "invalid session"};
         await fetch("/api/Login",{
@@ -54,11 +80,13 @@ const Top = (props : ISessionId) => {
             setSnackbarState(true);
         });
     };
+
     const appbar = {
         title: "管理トップ",
-        rightButton: <Button variant="contained" onClick={onLogout}>ログアウト</Button>,
-        leftButton: <IconButton onClick={()=> router.back()}><ArrowBackIosIcon/></IconButton>
+        rightButton : <Button variant="contained" onClick={onLogout}>ログアウト</Button>,
+        leftButton : <IconButton onClick={()=> router.back()}><ArrowBackIosIcon/></IconButton>
     }
+
     useEffect(()=>{
         if(props.sessionId == "Unauthorised"){
             setTimeout(() => {
@@ -70,34 +98,42 @@ const Top = (props : ISessionId) => {
             }
         }
     });
+
     return (
         <>
         <OuterFrame appbar={appbar} snackbar={snackbar}>
-        {
-            props.sessionId == "Unauthorised" ?
-            <>
-            <h1>非公開エリア</h1> 
-            <p>{timer}秒後にログイン画面に移動します。</p>
-            </>
-            :
-            <>
-            <h1>ここは管理トップです</h1>
-            <p>{`あなたのセッションIDは${props.sessionId}です。`}</p>
-            <div
-            style={{
-                display:"flex",
-                flexDirection:"column",
-                justifyContent : "space-between",
-                height:"150px"
-            }}>
-            <Button variant="contained" color="primary">教科管理</Button>
-            <Button variant="contained" color="primary">問題管理</Button>
-            <Button variant="contained" color="primary">管理ユーザの管理</Button>
-            </div>
-            </>
-        }
+            <ManageTopSwitch isShow={ props.sessionId == "Unauthorised"}>
+                <Typography variant="h4">非公開エリア</Typography>
+                <p>{timer}秒後にログイン画面に移動します。</p>
+            </ManageTopSwitch>
+            <ManageTopSwitch isShow={ props.sessionId != "Unauthorised"}>
+                <div
+                style={{
+                    display:"flex",
+                    flexDirection:"column",
+                    padding:"10px",
+                    height:"110px",
+                    justifyContent:"space-around"
+                }}
+                >
+                    <Typography variant="h4" align="center">管理トップ</Typography>
+                    <Typography variant="subtitle1" align="center">自主学習システムの管理を行えます。</Typography>
+                </div>
+                <div
+                style={{
+                    display : "flex",
+                    flexDirection : "column",
+                    justifyContent : "space-between",
+                    border:"1px solid #b3b1b1",
+                    borderRadius:"10px",
+                    padding:"10px"
+                }}>
+                <ManageMenuList menuList={TopMenuList} />
+                </div>
+            </ManageTopSwitch>
         </OuterFrame>
         </>
     );
+
 };
 export default Top;
