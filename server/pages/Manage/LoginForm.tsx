@@ -28,7 +28,10 @@ let LoginForm = () => {
     useEffect( () => {
         // localStorageにsessionIdがある状態でログインフォームアクセスしたとき、
         //sessionIdが有効な時はそのまま管理トップに遷移する。
-        console.log();
+        const preSessionId = localStorage.getItem("sessionId");
+        if(preSessionId != null){
+            router.push(`/Manage/Top?sessionId=${preSessionId}`);
+        }
     });
     return (
         <OuterFrame appbar={appbar} snackbar={snackbar}>

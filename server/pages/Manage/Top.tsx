@@ -65,6 +65,7 @@ const Top = (props : ISessionId) => {
                 setTimer(timer - 1);
             },1000);
             if(timer == 0){
+                localStorage.removeItem("sessionId");
                 router.push("/Manage/LoginForm");
             }
         }
