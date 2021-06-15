@@ -1,7 +1,7 @@
-import { AppBar, Toolbar, IconButton, Typography, Button, Snackbar } from "@material-ui/core";
+import { AppBar, Toolbar, Typography, Snackbar } from "@material-ui/core";
 import React from "react";
-import MenuIcon from '@material-ui/icons/Menu';
-import { useState } from "react";
+
+
 
 interface IProps {
     appbar: {
@@ -46,6 +46,6 @@ const OuterFrame = (props: IProps) => {
                 key={"bottomleft"}
             />
         </>
-    );
+        );
 }
 export default OuterFrame;
