@@ -32,7 +32,11 @@ let LoginForm = () => {
     });
     return (
         <OuterFrame appbar={appbar} snackbar={snackbar}>
-            <div>
+            <div style={{
+                border : "2px solid #777777",
+                borderRadius : "10px",
+                padding : "20px"
+            }}>
                 <Form
                     action="/api/Login"
                     schema={LoginFormSchema}
