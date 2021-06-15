@@ -83,6 +83,17 @@ const Top = (props : ISessionId) => {
             <>
             <h1>ここは管理トップです</h1>
             <p>{`あなたのセッションIDは${props.sessionId}です。`}</p>
+            <div
+            style={{
+                display:"flex",
+                flexDirection:"column",
+                justifyContent : "space-between",
+                height:"150px"
+            }}>
+            <Button variant="contained" color="primary">教科管理</Button>
+            <Button variant="contained" color="primary">問題管理</Button>
+            <Button variant="contained" color="primary">管理ユーザの管理</Button>
+            </div>
             </>
         }
         </OuterFrame>
