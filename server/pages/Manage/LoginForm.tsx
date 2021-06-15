@@ -49,7 +49,12 @@ let LoginForm = () => {
                     }}
                     onApiError={(err) => {
                         console.log(err);
+                    }}uiSchema={{
+                        "password" : {
+                            "ui:widget": "password"
+                        }
                     }}
+                    autoComplete="on"
                     name = "loginForm"
                     id = "loginForm"
                 />
