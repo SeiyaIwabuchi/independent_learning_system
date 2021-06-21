@@ -1,6 +1,6 @@
 interface IProps{
     isShow : boolean
-    children? : JSX.Element[]
+    children? : JSX.Element[] | JSX.Element
 }
 const ManageTopSwitch = (props : IProps) => {
     return (

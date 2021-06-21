@@ -4,12 +4,12 @@ import React from "react";
 
 
 interface IProps {
-    appbar: {
+    appbar : {
         title : string,
         leftButton? : JSX.Element,
         rightButton? : JSX.Element
     },
-    snackbar:{
+    snackbar : {
         state? : boolean,
         setState? : React.Dispatch<React.SetStateAction<boolean>>,
         msg? : string
@@ -23,7 +23,7 @@ const OuterFrame = (props: IProps) => {
             <AppBar position="fixed">
                 <Toolbar>
                     {props.appbar.leftButton}
-                    <Typography variant="h6" >
+                    <Typography variant="h6" style={{marginLeft:"10px"}}>
                         {props.appbar.title}
                     </Typography>
                     <div style={{marginLeft:"auto",marginRight:"0px"}}>{props.appbar.rightButton}</div>
