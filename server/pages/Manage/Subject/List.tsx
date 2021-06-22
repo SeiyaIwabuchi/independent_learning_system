@@ -29,14 +29,17 @@ const List = (props: ISessionId) => {
         {
             primaryText: "テスト理論",
             secondaryText: "Junitを用いたJavaのテスト",
+            sessionId:props.sessionId
         },
         {
             primaryText: "人工知能",
             secondaryText: "ExcelとPythonを用いた機械学習超入門",
+            sessionId:props.sessionId
         },
         {
             primaryText: "Python",
             secondaryText: "Pythonの基礎学習",
+            sessionId:props.sessionId
         },
     ];
 
@@ -82,6 +85,7 @@ const List = (props: ISessionId) => {
             pageTitle="教科管理" 
             pageLayoutType={LAYOUT_TYPE.MENU}
             sessionId={props.sessionId}
+            AddUrl="/Manage/Subject/Add"
             >
                 <div
                     style={{
