@@ -1,20 +1,20 @@
 import { AppBar, Toolbar, Typography, Snackbar } from "@material-ui/core";
-import React from "react";
+import React, { ReactNode } from "react";
 
 
 
 interface IProps {
     appbar : {
         title : string,
-        leftButton? : JSX.Element,
-        rightButton? : JSX.Element
+        leftButton? : ReactNode,
+        rightButton? : ReactNode
     },
     snackbar : {
         state? : boolean,
         setState? : React.Dispatch<React.SetStateAction<boolean>>,
         msg? : string
     },
-    children:JSX.Element | JSX.Element[]
+    children:ReactNode
 }
 
 const OuterFrame = (props: IProps) => {

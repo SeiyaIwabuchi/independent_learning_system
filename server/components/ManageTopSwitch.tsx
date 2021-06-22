@@ -1,6 +1,8 @@
+import { ReactNode } from "react";
+
 interface IProps{
     isShow : boolean
-    children? : JSX.Element[] | JSX.Element
+    children? : ReactNode
 }
 const ManageTopSwitch = (props : IProps) => {
     return (

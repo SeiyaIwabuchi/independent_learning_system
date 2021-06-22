@@ -56,7 +56,8 @@ let LoginForm = () => {
                     }}
                     onApiError={(err) => {
                         console.log(err);
-                    }}uiSchema={{
+                    }}
+                    uiSchema={{
                         "password" : {
                             "ui:widget": "password"
                         }

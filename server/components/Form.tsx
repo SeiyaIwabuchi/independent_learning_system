@@ -2,7 +2,7 @@ import { Button } from "@material-ui/core";
 import { AjvError, ErrorSchema, FormProps, FormValidation, IChangeEvent, UiSchema } from "@rjsf/core";
 import Form_ from "@rjsf/material-ui";
 import router from "next/router";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { useEffect } from "react";
 
 
@@ -12,7 +12,7 @@ interface IProps{
     schema : any,
     uiSchema? : UiSchema,
     submitButtonName? : string,
-    onChange? : (e: IChangeEvent<any>, es?: ErrorSchema | undefined) => any,
+    onChange? : (e: any, es?: ErrorSchema | undefined) => any,
     formData? : any,
     autoComplete? : string,
     onSubmit? : (args? : any) => any,
@@ -24,7 +24,7 @@ interface IProps{
     transformErrors? : (errors: AjvError[]) => AjvError[],
     name? : string,
     id? : string,
-    children? : JSX.Element[] | JSX.Element,
+    children? : ReactNode,
 }
 
 let errors_ : any = [""];
@@ -100,9 +100,6 @@ const Form = (props : IProps) => {
                     color="primary"
                     onClick={
                         props.onSubmit || onSubmit
-                    }
-                    disabled={
-                        !(errors_.length == 0)
                     }
                     style={{
                         width:"100%"

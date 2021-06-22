@@ -1,6 +1,6 @@
 import { ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, Divider, List } from "@material-ui/core";
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import React from "react";
+import React, { ReactNode } from "react";
 import Link from "next/link";
 
 export interface IElemetPorps{
@@ -26,7 +26,7 @@ const ManageMenuListElemet = (props : IElemetPorps) => {
 };
 
 const ManageMenuList = (props : {menuList : IElemetPorps[]}) => {
-    const menu : JSX.Element[]= [];
+    const menu : JSX.Element[] = [];
     for(let i=0;i<props.menuList.length;i++){
         let prop = props.menuList[i];
         menu.push(
