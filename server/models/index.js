@@ -18,7 +18,8 @@ if (config.use_env_variable) {
 const db = {
   t_users : require("./t_users")(sequelize, Sequelize.DataTypes),
   t_login_histories : require("./t_login_histories")(sequelize, Sequelize.DataTypes),
-  t_sessions : require("./t_sessions")(sequelize, Sequelize.DataTypes)
+  t_sessions : require("./t_sessions")(sequelize, Sequelize.DataTypes),
+  t_subjects : require("./t_subjects")(sequelize, Sequelize.DataTypes)
 };
 
 // fs

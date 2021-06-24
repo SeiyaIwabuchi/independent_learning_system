@@ -18,26 +18,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const List = (props: ISessionId) => {
 
-
-    const MenuList = [
-        {
-            id: 0,
-            primaryText: "テスト理論",
-            secondaryText: "Junitを用いたJavaのテスト",
-        },
-        {
-            id : 1,
-            primaryText: "人工知能",
-            secondaryText: "ExcelとPythonを用いた機械学習超入門",
-        },
-        {
-            id : 2,
-            primaryText: "Python",
-            secondaryText: "Pythonの基礎学習",  
-        },
-    ];
-
-
     const onLogout = async () => {
         const sessionId: ISessionId = { sessionId: localStorage.getItem("sessionId") || "invalid session" };
         await fetch("/api/Login", {

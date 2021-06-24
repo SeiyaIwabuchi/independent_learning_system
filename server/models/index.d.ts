@@ -31,6 +31,14 @@ export interface t_sessions extends Model {
     readonly created_at: date;
     readonly updated_at: date;
 }
+
+export interface t_subjects extends Model {
+    readonly id: number;
+    name: string;
+    description : string;
+    readonly created_at: date;
+    readonly updated_at: date;
+}
 // type MemberModelStatic = typeof Model & {
 //     new (values?: object, options?: BuildOptions): MemberModel;
 // }
@@ -46,6 +54,10 @@ type t_login_historiesModelStatic = typeof Model & {
 type t_sessionsModelStatic = typeof Model & {
     new (values?: object, options?: BuildOptions): t_sessions;
 }
+
+type t_subjectModelStatic = typeof Model & {
+    new (values?: object, options?: BuildOptions): t_subjects;
+}
 /* --------------- */
 
 interface DBModel {
@@ -53,6 +65,7 @@ interface DBModel {
     t_users : t_usersModelStatic;
     t_login_histories : t_login_historiesModelStatic;
     t_sessions: t_sessionsModelStatic;
+    t_subjects: t_subjectModelStatic;
 }
 
 declare const db: DBModel;

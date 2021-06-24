@@ -1,4 +1,5 @@
 'use strict';
+const sequelize = require('sequelize');
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('t_users', {
@@ -23,6 +24,13 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    queryInterface.bulkInsert('t_users',[{
+      id : null,
+      name : "t",
+      password : "t",
+      created_at : new Date(),
+      updated_at : new Date(),
+    }]);
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('t_users');
