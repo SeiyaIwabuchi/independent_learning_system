@@ -2,6 +2,6 @@ export interface ISessionId {
     sessionId : string
 };
 
-export const SessionId = (params : ISessionId) => {
-    return `sessionId=${params.sessionId}`
+export const SessionId = (sessionId : string) => {
+    return `sessionId=${sessionId}`
 };

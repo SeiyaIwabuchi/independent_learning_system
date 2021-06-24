@@ -9,11 +9,7 @@ import { SessionId } from "../../../query_param_shemas/SessionId";
 import router from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const sessionId = context.query.sessionId as string;
     const subjectName = context.query.name as string
-    const session_model =
-        await db.t_sessions.findByPk(sessionId);
-    const resSessionId = session_model == null ? "Unauthorised" : `${session_model.id}`;
     return {
         props: {
             sessionId: await SessionIdValidater(context),
@@ -34,18 +30,22 @@ const Edit = (props : IProps) => {
     }
     const subjectName = useState({name:props.name});
     return (
-        <ManagementCommon pageTitle="教科編集" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId} onRightButtonClicked={() => {
-            router.push(`/Manage/Subject/List?${SessionId({sessionId: props.sessionId})}`);
+        <ManagementCommon 
+            pageTitle="教科編集" 
+            pageLayoutType={LAYOUT_TYPE.EDIT} 
+            sessionId={props.sessionId} 
+            onRightButtonClicked={() => {
+                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
         }}>
             <Form
             schema={SubjectAddFormSchema.definitions.SubjectAddFormShcema}
             dataDest="#"
             submitButtonName="完了"
             onApiRes={() => {
-                router.push(`/Manage/Subject/List?${SessionId({sessionId: props.sessionId})}`);
+                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
             }}
             onApiError={() => {
-                router.push(`/Manage/Subject/List?${SessionId({sessionId: props.sessionId})}`);
+                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
             }}
             formData={subjectName[0]}
             onChange={(event) => {

@@ -9,10 +9,19 @@ import { SessionId } from "../../query_param_shemas/SessionId";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { IconButton } from "@material-ui/core";
 import { useEffect } from "react";
+import { GetServerSideProps } from "next";
 
 const LoginFormSchema: any = LoginFormSchema_.definitions.LoginFormShcema;
 
-let LoginForm = () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    return {
+        props:{
+            preSessionId : context.req.cookies.sessionId || "Unauthorised"
+        }
+    }
+};
+
+let LoginForm = (props : {preSessionId : string}) => {
     const appbar = {
         title: "ログイン",
         rightButton: <></>,
@@ -28,9 +37,8 @@ let LoginForm = () => {
     useEffect( () => {
         // localStorageにsessionIdがある状態でログインフォームアクセスしたとき、
         //sessionIdが有効な時はそのまま管理トップに遷移する。
-        const preSessionId = localStorage.getItem("sessionId");
-        if(preSessionId != null){
-            router.push(`/Manage/Top?sessionId=${preSessionId}`);
+        if(props.preSessionId != "Unauthorised"){
+            router.push(`/Manage/Top?sessionId=${props.preSessionId}`);
         }
     });
     return (
@@ -47,8 +55,7 @@ let LoginForm = () => {
                     dataDest="/api/Login"
                     onApiRes={(json: LoginFormResponseShcema) => {
                         if (json.sessionId != "Unauthorised") {
-                            localStorage.setItem("sessionId", json.sessionId);
-                            router.push(`/Manage/Top?${SessionId(json)}`);
+                            router.push(`/Manage/SetCookie?${SessionId(json.sessionId)}&goto=${"/Manage/Top"}`);
                         } else {
                             setSnackbarMsg("ログインに失敗しました。ユーザ名またはパスワードが間違っています。");
                             setSnackbarState(true);

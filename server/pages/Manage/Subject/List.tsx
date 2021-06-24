@@ -1,20 +1,14 @@
 import { Button, IconButton, Typography } from "@material-ui/core";
 import { GetServerSideProps } from "next";
 import router from "next/router";
-import React from "react";
-import OuterFrame from "../../../components/OuterFrame";
+import React, { useState } from "react";
 import SubjectMenuList, { IElemetPorps } from "../../../components/SubjectMenuList";
-import db from "../../../models";
-import { ISessionId, SessionId } from "../../../query_param_shemas/SessionId";
+import { ISessionId } from "../../../query_param_shemas/SessionId";
 import SessionIdValidater from "../../../utils/SessionIdValidater";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ManagementCommon, { LAYOUT_TYPE } from "../../../components/ManagementCommon";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const sessionId = context.query.sessionId as string;
-    const session_model =
-        await db.t_sessions.findByPk(sessionId);
-    const resSessionId = session_model == null ? "Unauthorised" : `${session_model.id}`;
     return {
         props: {
             sessionId: await SessionIdValidater(context)
@@ -25,27 +19,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const List = (props: ISessionId) => {
 
 
-    const MenuList: IElemetPorps[] = [
+    const MenuList = [
         {
+            id: 0,
             primaryText: "テスト理論",
             secondaryText: "Junitを用いたJavaのテスト",
-            sessionId:props.sessionId
         },
         {
+            id : 1,
             primaryText: "人工知能",
             secondaryText: "ExcelとPythonを用いた機械学習超入門",
-            sessionId:props.sessionId
         },
         {
+            id : 2,
             primaryText: "Python",
-            secondaryText: "Pythonの基礎学習",
-            sessionId:props.sessionId
+            secondaryText: "Pythonの基礎学習",  
         },
     ];
 
-    const snackbar = {
-
-    };
 
     const onLogout = async () => {
         const sessionId: ISessionId = { sessionId: localStorage.getItem("sessionId") || "invalid session" };
@@ -78,6 +69,8 @@ const List = (props: ISessionId) => {
         rightButton: <Button variant="contained" onClick={onLogout}>ログアウト</Button>,
         leftButton: <IconButton onClick={() => router.back()}><ArrowBackIosIcon /></IconButton>
     }
+    
+    const deleteList = useState<number[]>([]);
 
     return (
         <>
@@ -107,7 +100,7 @@ const List = (props: ISessionId) => {
                         justifyContent: "space-between",
                         padding: "10px"
                     }}>
-                    <SubjectMenuList menuList={MenuList} />
+                    <SubjectMenuList menuList={MenuList} deleteList={deleteList}/>
                 </div>
             </ManagementCommon>
         </>

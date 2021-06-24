@@ -39,10 +39,10 @@ const Add = (props : IProps) => {
             dataDest="#"
             submitButtonName="追加"
             onApiRes={() => {
-                router.push(`/Manage/Subject/List?${SessionId({sessionId: props.sessionId})}`);
+                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
             }}
             onApiError={() => {
-                router.push(`/Manage/Subject/List?${SessionId({sessionId: props.sessionId})}`);
+                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
             }}
             >
             </Form>

@@ -1,26 +1,21 @@
 import { Button, IconButton, Typography } from "@material-ui/core";
 import { GetServerSideProps } from "next";
 import React, { useState } from "react";
-import OuterFrame from "../../components/OuterFrame";
 import { ISessionId, SessionId } from "../../query_param_shemas/SessionId";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import router from "next/router";
 import db from "../../models";
 import { useEffect } from "react";
-import ManageTopSwitch from "../../components/ManageTopSwitch";
 import SessionIdValidater from "../../utils/SessionIdValidater";
 import ManageMenuList, { IElemetPorps } from "../../components/ManageMenuList";
 import ManagementCommon, { LAYOUT_TYPE } from "../../components/ManagementCommon";
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const sessionId = context.query.sessionId as string;
-    const session_model =
-        await db.t_sessions.findByPk(sessionId);
-    const resSessionId = session_model == null ? "Unauthorised" : `${session_model.id}`;
+    const validSessionId = await SessionIdValidater(context);
     return {
         props: {
-            sessionId: await SessionIdValidater(context)
+            sessionId: validSessionId
         }
     }
 };
@@ -36,17 +31,17 @@ const Top = (props: ISessionId) => {
         {
             primaryText: "教科管理",
             secondaryText: "教科の変更、追加、削除",
-            destinationURL: `/Manage/Subject/List?${SessionId({ sessionId: props.sessionId })}`,
+            destinationURL: `/Manage/Subject/List?${SessionId(props.sessionId)}`,
         },
         {
             primaryText: "問題管理",
             secondaryText: "問題の変更、追加、削除",
-            destinationURL: `/Manage/Problem/List?${SessionId({ sessionId: props.sessionId })}`,
+            destinationURL: `/Manage/Problem/List?${SessionId(props.sessionId)}`,
         },
         {
             primaryText: "管理ユーザの管理",
             secondaryText: "管理ユーザの変更、追加、削除",
-            destinationURL: `/Manage/User/List?${SessionId({ sessionId: props.sessionId })}`,
+            destinationURL: `/Manage/User/List?${SessionId(props.sessionId)}`,
         },
     ];
 
