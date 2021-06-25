@@ -1,46 +1,45 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
 import React, { Dispatch, ReactNode, SetStateAction, useContext } from "react";
+import { SubjectForm } from "../form_schemas/ts/SubjectForm";
 import { SessionId } from "../query_param_shemas/SessionId";
 import { UserContext } from "./ManagementCommon";
 
 export interface IElemetPorps{
     subject:{
-        id : number,
-        primaryText : string,
-        secondaryText? : string,
-        destinationURL?: string,
+        hash : string,
+        name : string,
+        description? : string,
     },
     deleteList : [
-        number[], 
-        Dispatch<SetStateAction<number[]>>
+        string[], 
+        Dispatch<SetStateAction<string[]>>
        ]
 }
 
 const SubjectMenuListElemet = (props : IElemetPorps) => {
-    const userContext = useContext(UserContext);
     return (
         <>
             <ListItem 
                 button={true} 
                 component="a" 
-                href={`/Manage/Subject/Edit?${SessionId(userContext.sessionId)}&name=${props.subject.primaryText}`}
+                href={`/Manage/Subject/Edit?&hash=${props.subject.hash}`}
             >
                 <ListItemText
-                    primary={props.subject.primaryText}
-                    secondary={props.subject.secondaryText || null}
+                    primary={props.subject.name}
+                    secondary={props.subject.description!}
                 />
                 <ListItemSecondaryAction>
                     <input type="checkbox" onChange={
                         (event) => {
                             let deleteList = props.deleteList[0].slice();
-                            if(deleteList.indexOf(props.subject.id) == -1)
-                                deleteList.push(props.subject.id);
+                            if(deleteList.indexOf(props.subject.hash) == -1)
+                                deleteList.push(props.subject.hash);
                             else
-                                deleteList.splice( deleteList.indexOf(props.subject.id), 1);
+                                deleteList.splice( deleteList.indexOf(props.subject.hash), 1);
                             props.deleteList[1](deleteList);
                         }
                     }
-                    checked={ props.deleteList[0].indexOf(props.subject.id) != -1 }
+                    checked={ props.deleteList[0].indexOf(props.subject.hash) != -1 }
                     />
                 </ListItemSecondaryAction>
             </ListItem>
@@ -50,16 +49,12 @@ const SubjectMenuListElemet = (props : IElemetPorps) => {
 
 const SubjectMenuList = (
     props : {
-        menuList : {
-             id: number; 
-             primaryText: string,
-             secondaryText: string
-             }[],
-             deleteList:[
-                 number[], 
-                 Dispatch<SetStateAction<number[]>>
-                ]
-            }) => {
+        menuList : SubjectForm[],
+        deleteList:[
+            string[], 
+            Dispatch<SetStateAction<string[]>>
+        ]
+    }) => {
     const menu : JSX.Element[] = [];
     for(let i=0;i<props.menuList.length;i++){
         let prop = props.menuList[i];

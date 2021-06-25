@@ -14,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   t_subject.init({
-    id: DataTypes.NUMBER
+    hash : DataTypes.STRING,
+    name : DataTypes.STRING,
+    description : DataTypes.STRING
   }, {
     sequelize,
     modelName: 't_subject',

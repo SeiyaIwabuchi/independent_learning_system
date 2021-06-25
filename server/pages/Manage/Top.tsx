@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { ISessionId, SessionId } from "../../query_param_shemas/SessionId";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import router from "next/router";
-import db from "../../models";
 import { useEffect } from "react";
 import SessionIdValidater from "../../utils/SessionIdValidater";
 import ManageMenuList, { IElemetPorps } from "../../components/ManageMenuList";
@@ -31,17 +30,17 @@ const Top = (props: ISessionId) => {
         {
             primaryText: "教科管理",
             secondaryText: "教科の変更、追加、削除",
-            destinationURL: `/Manage/Subject/List?${SessionId(props.sessionId)}`,
+            destinationURL: `/Manage/Subject/List`,
         },
         {
             primaryText: "問題管理",
             secondaryText: "問題の変更、追加、削除",
-            destinationURL: `/Manage/Problem/List?${SessionId(props.sessionId)}`,
+            destinationURL: `/Manage/Problem/List`,
         },
         {
             primaryText: "管理ユーザの管理",
             secondaryText: "管理ユーザの変更、追加、削除",
-            destinationURL: `/Manage/User/List?${SessionId(props.sessionId)}`,
+            destinationURL: `/Manage/User/List`,
         },
     ];
 
@@ -51,45 +50,12 @@ const Top = (props: ISessionId) => {
         msg: snackbarMsg
     }
 
-    const onLogout = async () => {
-        const sessionId: ISessionId = { sessionId: localStorage.getItem("sessionId") || "invalid session" };
-        await fetch("/api/Login", {
-            method: "delete",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(sessionId)
-        })
-            .then(res => res.json())
-            .then((json: { result: string }) => {
-                if (json.result == "ok") {
-
-                } else {
-                    console.log(json);
-                }
-                localStorage.removeItem("sessionId");
-                router.push("/Manage/LoginForm");
-            })
-            .catch((err) => {
-                console.log(err);
-                setSnackbarMsg("ログアウトに失敗しました。");
-                setSnackbarState(true);
-            });
-    };
-
-    const appbar = {
-        title: "管理トップ",
-        rightButton: <Button variant="contained" onClick={onLogout}>ログアウト</Button>,
-        leftButton: <IconButton onClick={() => router.back()}><ArrowBackIosIcon /></IconButton>
-    }
-
     useEffect(() => {
         if (props.sessionId == "Unauthorised") {
             setTimeout(() => {
                 setTimer(timer - 1);
             }, 1000);
             if (timer == 0) {
-                localStorage.removeItem("sessionId");
                 router.push("/Manage/LoginForm");
             }
         }

@@ -7,6 +7,10 @@
                 "name": {
                     "type": "string",
                     "title": "教科名"
+                },
+                "description": {
+                    "type": "string",
+                    "title": "説明"
                 }
             },
             "required": [

@@ -33,16 +33,21 @@ const Add = (props : IProps) => {
     }
 
     return (
-        <ManagementCommon pageTitle="教科追加" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId} disableRightButton>
+        <ManagementCommon pageTitle="教科追加" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId}>
             <Form
             schema={SubjectAddFormSchema.definitions.SubjectAddFormShcema}
-            dataDest="#"
+            dataDest="/api/AddSubject"
             submitButtonName="追加"
             onApiRes={() => {
-                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
+                router.push(`/Manage/Subject/List`);
             }}
             onApiError={() => {
-                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
+                router.push(`/Manage/Subject/List`);
+            }}
+            uiSchema={{
+                description:{
+                    "ui:widget": "textarea"
+                }
             }}
             >
             </Form>

@@ -34,6 +34,7 @@ export interface t_sessions extends Model {
 
 export interface t_subjects extends Model {
     readonly id: number;
+    hash : string;
     name: string;
     description : string;
     readonly created_at: date;

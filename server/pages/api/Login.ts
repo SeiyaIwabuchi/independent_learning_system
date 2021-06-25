@@ -3,7 +3,6 @@ import t_login_histories from "../../database_schemas/t_login_histories";
 import t_sessions from "../../database_schemas/t_sessions";
 import { LoginFormResponseShcema, LoginFormShcema } from "../../form_schemas/ts/LoginFormShcema";
 import db from "../../models";
-import { ISessionId } from "../../query_param_shemas/SessionId";
 import LoginFormResponseShcemaForValidation from "../../form_schemas/LoginFormSchema.json";
 import AjvValidater from "../../utils/AjvValidater";
 
@@ -48,21 +47,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }else{
             //未認証応答
             res.status(401).json(resjson);
-        }
-    } else if (req.method == "DELETE") {
-        if (res) {
-            const resjson = {
-                result: "ok"
-            }
-            const authInfo: ISessionId = req.body;
-            // t_sessoinsから該当のセッションIDのレコードを削除する。
-            const sessionId_model =
-                await db.t_sessions.findByPk(authInfo.sessionId);
-            if (sessionId_model == null) {
-                resjson.result = "ng";
-            }
-            sessionId_model?.destroy();
-            res.status(200).json(resjson);
         }
     }
 };

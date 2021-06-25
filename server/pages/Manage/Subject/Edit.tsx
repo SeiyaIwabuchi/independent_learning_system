@@ -5,52 +5,67 @@ import ManagementCommon, { LAYOUT_TYPE } from "../../../components/ManagementCom
 import db from "../../../models";
 import SessionIdValidater from "../../../utils/SessionIdValidater";
 import SubjectAddFormSchema from "../../../form_schemas/SubjectAddFormShcema.json";
-import { SessionId } from "../../../query_param_shemas/SessionId";
 import router from "next/router";
+import { SubjectForm } from "../../../form_schemas/ts/SubjectForm";
+import { SubjectFormUtil } from "../../../utils/SubjectFormUtil";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const subjectName = context.query.name as string
+    const hashByQueryParam = context.query.hash as string
+    let subject = SubjectFormUtil.create();
+    db.t_subjects.findOne(
+        {
+            where : {
+                hash : hashByQueryParam
+            }
+        }
+    ).then((r) => {
+        subject.id = r!.id;
+        subject.hash = r!.hash;
+        subject.name = r!.name;
+        subject.description = r!.description;
+    });
     return {
         props: {
             sessionId: await SessionIdValidater(context),
-            name : subjectName
+            subject : subject
         }
     }
 };
 
 interface IProps{
     sessionId : string,
-    name : string
+    subject : SubjectForm
 }
 
 const Edit = (props : IProps) => {
-    // title: string; leftButton?: Element | undefined; rightButton?: Element | undefined;
-    const appbar = {
-        title : "教科追加"
-    }
-    const subjectName = useState({name:props.name});
+    const subject = useState(props.subject);
     return (
         <ManagementCommon 
             pageTitle="教科編集" 
             pageLayoutType={LAYOUT_TYPE.EDIT} 
             sessionId={props.sessionId} 
             onRightButtonClicked={() => {
-                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
+                router.push(`/Manage/Subject/List`);
         }}>
             <Form
             schema={SubjectAddFormSchema.definitions.SubjectAddFormShcema}
             dataDest="#"
             submitButtonName="完了"
             onApiRes={() => {
-                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
+                router.push(`/Manage/Subject/List`);
             }}
             onApiError={() => {
-                router.push(`/Manage/Subject/List?${SessionId(props.sessionId)}`);
+                router.push(`/Manage/Subject/List`);
             }}
-            formData={subjectName[0]}
+            formData={subject[0]}
             onChange={(event) => {
                 console.log(event.name)
-                subjectName[1]({name : event.name});
+                subject[1](event);
+            }}
+            uiSchema={{
+                description:{
+                    "ui:widget": "textarea"
+                }
             }}
             >
             </Form>

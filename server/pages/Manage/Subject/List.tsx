@@ -7,16 +7,31 @@ import { ISessionId } from "../../../query_param_shemas/SessionId";
 import SessionIdValidater from "../../../utils/SessionIdValidater";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ManagementCommon, { LAYOUT_TYPE } from "../../../components/ManagementCommon";
+import db from "../../../models";
+import { SubjectForm } from "../../../form_schemas/ts/SubjectForm";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    let subjects : SubjectForm[] = [];
+    await db.t_subjects.findAll()
+    .then((subjects_) => {
+        subjects = subjects_.map((r) => {
+            return {
+                id : r.id,
+                hash : r.hash,
+                name : r.name,
+                description : r.description
+            }
+        })
+    });
     return {
         props: {
-            sessionId: await SessionIdValidater(context)
+            sessionId: await SessionIdValidater(context),
+            subjects : subjects
         }
     }
 };
 
-const List = (props: ISessionId) => {
+const List = (props: ISessionId & {subjects : SubjectForm[]}) => {
 
     const onLogout = async () => {
         const sessionId: ISessionId = { sessionId: localStorage.getItem("sessionId") || "invalid session" };
@@ -37,20 +52,9 @@ const List = (props: ISessionId) => {
                 localStorage.removeItem("sessionId");
                 router.push("/Manage/LoginForm");
             })
-        // .catch((err) => {
-        //     console.log(err);
-        //     setSnackbarMsg("ログアウトに失敗しました。");
-        //     setSnackbarState(true);
-        // });
     };
-
-    const appbar = {
-        title: "管理トップ",
-        rightButton: <Button variant="contained" onClick={onLogout}>ログアウト</Button>,
-        leftButton: <IconButton onClick={() => router.back()}><ArrowBackIosIcon /></IconButton>
-    }
     
-    const deleteList = useState<number[]>([]);
+    const deleteList = useState<string[]>([]);
 
     return (
         <>
@@ -80,7 +84,7 @@ const List = (props: ISessionId) => {
                         justifyContent: "space-between",
                         padding: "10px"
                     }}>
-                    <SubjectMenuList menuList={MenuList} deleteList={deleteList}/>
+                    <SubjectMenuList menuList={props.subjects} deleteList={deleteList}/>
                 </div>
             </ManagementCommon>
         </>

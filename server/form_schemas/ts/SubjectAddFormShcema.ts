@@ -1,3 +1,4 @@
 export type SubjectAddFormShcema = {
-    name : string
+    name : string,
+    description : string
 }

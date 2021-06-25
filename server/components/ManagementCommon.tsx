@@ -128,7 +128,7 @@ const ManagementCommon = (props: IProps) => {
                     <div style={{ marginTop: "50px" }} />
                     <Divider />
                     <ListItem button key={"goManageTop"}>
-                        <ListItemIcon onClick={() => { router.push(`/Manage/Top?${SessionId(props.sessionId)}`) }}>
+                        <ListItemIcon onClick={() => { router.push(`/Manage/Top`) }}>
                             <SettingsIcon />
                         </ListItemIcon>
                         <ListItemText primary="管理トップ"></ListItemText>
