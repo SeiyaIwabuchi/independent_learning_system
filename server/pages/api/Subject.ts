@@ -3,12 +3,13 @@ import { SubjectForm } from "../../form_schemas/ts/SubjectForm";
 import db from "../../models";
 import SessionIdValidater from "../../utils/SessionIdValidater";
 import crypto from "crypto";
+import { Op } from "sequelize";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     if(await SessionIdValidater(undefined,req.cookies.sessionId) != `Unauthorised`){
-        const subject : SubjectForm = req.body;
         if(req.method == "POST"){
+            const subject : SubjectForm = JSON.parse(req.body);
             // 登録する処理
             subject.hash = crypto.createHash("sha256")
             .update(subject.name + new Date().getTime(), "utf8")
@@ -18,9 +19,35 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 res.json(r);
             })
         }else if(req.method == "PUT"){
+            const subject : SubjectForm = JSON.parse(req.body);
             // 更新する処理
+            // 更新対象のレコードを取得する
+            await db.t_subjects.findOne({
+                where : {
+                    hash : subject.hash
+                }
+            }).then((r)=>{
+                r!.name = subject.name;
+                r!.description = subject.description;
+                r!.save();
+            });
+            res.json(subject);
         }else if(req.method == "DELETE"){
+            const subject : SubjectForm[] = JSON.parse(req.body);
             // 削除する処理
+            //削除対象のレコードを取得する
+            await db.t_subjects.findAll({
+                where : {
+                    hash : {
+                        [Op.in] : subject.map((r) => r.hash)
+                    }
+                }
+            }).then((r) => {
+                r!.forEach((rr) => {
+                    rr.destroy();
+                });
+            });
+            res.json(subject);
         }
     }else{
         res.json({message : "Unauthorise"})

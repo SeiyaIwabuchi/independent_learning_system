@@ -16,7 +16,7 @@ interface IProps{
     formData? : any,
     autoComplete? : string,
     onSubmit? : (args? : any) => any,
-    dataDest : string,
+    dataDest? : string,
     screenTraDest? : string,
     onApiRes? : (json : any) => any,
     onApiError? : (err : any) => any,
@@ -33,7 +33,7 @@ const Form = (props : IProps) => {
     const onSubmit = async () => {
         const formData_ = 
             props.formData || formData;
-        await fetch(props.dataDest,{
+        await fetch(props.dataDest!,{
             method:"POST",
             headers:{
                 "Content-Type" : "application/json"

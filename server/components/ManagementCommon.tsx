@@ -31,7 +31,8 @@ interface IProps {
     AddUrl?: string
     disableRightButton?: boolean
     onRightButtonClicked?: (event: any) => any
-    children?: ReactNode
+    children?: ReactNode,
+    MenuList? : JSX.Element[]
 };
 
 export const UserContext = createContext({sessionId:``});
@@ -148,7 +149,7 @@ const ManagementCommon = (props: IProps) => {
                     onClose={() => setAnchorEl(null)}
                 >
                     <MenuItem onClick={() => { setAnchorEl(null); router.push("/Manage/Logout?goto=/Manage/LoginForm"); }}>ログアウト</MenuItem>
-                    <MenuItem onClick={() => { setAnchorEl(null); router.push("../Top"); }}>選択項目削除</MenuItem>
+                    {props.MenuList}
                 </Menu>
                 <ManageTopSwitch isShow={props.sessionId == "Unauthorised"}>
                     <div

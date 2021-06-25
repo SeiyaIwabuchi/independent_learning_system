@@ -1,4 +1,4 @@
-import { Button, IconButton, Typography } from "@material-ui/core";
+import { Button, IconButton, MenuItem, Typography } from "@material-ui/core";
 import { GetServerSideProps } from "next";
 import router from "next/router";
 import React, { useState } from "react";
@@ -14,14 +14,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     let subjects : SubjectForm[] = [];
     await db.t_subjects.findAll()
     .then((subjects_) => {
-        subjects = subjects_.map((r) => {
-            return {
-                id : r.id,
-                hash : r.hash,
-                name : r.name,
-                description : r.description
-            }
-        })
+        for(let r of subjects_){
+            subjects.push(
+                {
+                    hash : r.hash,
+                    name : r.name,
+                    description : r.description
+                }
+            );
+        }
     });
     return {
         props: {
@@ -63,6 +64,13 @@ const List = (props: ISessionId & {subjects : SubjectForm[]}) => {
             pageLayoutType={LAYOUT_TYPE.MENU}
             sessionId={props.sessionId}
             AddUrl="/Manage/Subject/Add"
+            MenuList={[
+                <MenuItem onClick={() => {
+                    router.push(`/Manage/Subject/Delete?list=${JSON.stringify(deleteList[0])}`);
+                }}>
+                    選択項目削除
+                </MenuItem>
+            ]}
             >
                 <div
                     style={{

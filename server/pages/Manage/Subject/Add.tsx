@@ -11,10 +11,6 @@ import { SessionId } from "../../../query_param_shemas/SessionId";
 import router from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const sessionId = context.query.sessionId as string;
-    const session_model =
-        await db.t_sessions.findByPk(sessionId);
-    const resSessionId = session_model == null ? "Unauthorised" : `${session_model.id}`;
     return {
         props: {
             sessionId: await SessionIdValidater(context)
@@ -31,19 +27,27 @@ const Add = (props : IProps) => {
     const appbar = {
         title : "教科追加"
     }
-
+    const form = useState({name : "", description : ""});
     return (
         <ManagementCommon pageTitle="教科追加" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId}>
             <Form
             schema={SubjectAddFormSchema.definitions.SubjectAddFormShcema}
-            dataDest="/api/AddSubject"
+            onSubmit={
+                async () => {
+                    await fetch("/api/Subject",{
+                        method : "post",
+                        body : JSON.stringify(form[0])
+                    }).then(() => {
+                        router.push(`/Manage/Subject/List`);
+                    }).catch((err) => {
+                        alert(err);
+                        router.push(`/Manage/Subject/List`);
+                    });
+                }
+            }
+            onChange={(e)=>{form[1](e)}}
+            formData={form[0]}
             submitButtonName="追加"
-            onApiRes={() => {
-                router.push(`/Manage/Subject/List`);
-            }}
-            onApiError={() => {
-                router.push(`/Manage/Subject/List`);
-            }}
             uiSchema={{
                 description:{
                     "ui:widget": "textarea"

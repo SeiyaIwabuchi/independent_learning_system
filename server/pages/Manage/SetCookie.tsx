@@ -7,9 +7,11 @@ import OuterFrame from "../../components/OuterFrame";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const sessionIdByQueryParam = context.query.sessionId as string;
-    const validatedSessionId = await SessionIdValidater(context,sessionIdByQueryParam);
+    const validatedSessionId = await SessionIdValidater(undefined,sessionIdByQueryParam);
     const goto = context.query.goto as string;
     context.res.setHeader("Set-Cookie",`sessionId=${validatedSessionId};Path=${"/"}`);
+    context.res.setHeader("Location",`${goto}`);
+    context.res.statusCode = 300;
     return {
         props:{
             goto : goto

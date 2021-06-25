@@ -38,7 +38,7 @@ interface IProps{
 }
 
 const Edit = (props : IProps) => {
-    const subject = useState(props.subject);
+    const form = useState(props.subject);
     return (
         <ManagementCommon 
             pageTitle="教科編集" 
@@ -49,19 +49,22 @@ const Edit = (props : IProps) => {
         }}>
             <Form
             schema={SubjectAddFormSchema.definitions.SubjectAddFormShcema}
-            dataDest="#"
+            onSubmit={
+                async () => {
+                    await fetch("/api/Subject",{
+                        method : "put",
+                        body : JSON.stringify(form[0])
+                    }).then(() => {
+                        router.push(`/Manage/Subject/List`);
+                    }).catch((err) => {
+                        alert(err);
+                        router.push(`/Manage/Subject/List`);
+                    });
+                }
+            }
+            onChange={(e)=>{form[1](e)}}
+            formData={form[0]}
             submitButtonName="完了"
-            onApiRes={() => {
-                router.push(`/Manage/Subject/List`);
-            }}
-            onApiError={() => {
-                router.push(`/Manage/Subject/List`);
-            }}
-            formData={subject[0]}
-            onChange={(event) => {
-                console.log(event.name)
-                subject[1](event);
-            }}
             uiSchema={{
                 description:{
                     "ui:widget": "textarea"
