@@ -19,7 +19,7 @@ interface IProps {
 
 const OuterFrame = (props: IProps) => {
     return (
-        <>
+        <div style={{maxWidth:"50%",margin:"0 auto"}}>
             <AppBar position="fixed">
                 <Toolbar>
                     {props.appbar.leftButton}
@@ -45,7 +45,7 @@ const OuterFrame = (props: IProps) => {
                 message={props.snackbar.msg}
                 key={"bottomleft"}
             />
-        </>
+        </div>
         );
 }
 export default OuterFrame;
