@@ -19,7 +19,10 @@ const db = {
   t_users : require("./t_users")(sequelize, Sequelize.DataTypes),
   t_login_histories : require("./t_login_histories")(sequelize, Sequelize.DataTypes),
   t_sessions : require("./t_sessions")(sequelize, Sequelize.DataTypes),
-  t_subjects : require("./t_subjects")(sequelize, Sequelize.DataTypes)
+  t_subjects : require("./t_subjects")(sequelize, Sequelize.DataTypes),
+  t_images : require("./t_images")(sequelize, Sequelize.DataTypes),
+  t_problems : require("./t_problems")(sequelize, Sequelize.DataTypes),
+  t_choices : require("./t_choices")(sequelize, Sequelize.DataTypes),
 };
 
 // fs

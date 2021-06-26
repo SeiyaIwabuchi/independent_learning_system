@@ -12,9 +12,9 @@ import SessionIdValidater from "../../../utils/SessionIdValidater";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const deleteList = JSON.parse(context.query.list as string);
-    let subjectList: { "hash": string, "name": string }[] = [];
-    db.t_subjects.findAll({
-        attributes: ["name", "hash"],
+    let problemList: { "hash": string, "problem_body": string }[] = [];
+    await db.t_problems.findAll({
+        attributes: ["problem_body", "hash"],
         where: {
             hash: {
                 [Op.in]: deleteList
@@ -22,10 +22,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
     }).then((r) => {
         for(let rr of r){
-            subjectList.push(
+            problemList.push(
                 {
                     "hash": rr.hash,
-                    "name": rr.name
+                    "problem_body": rr.problem_body
                 }
             );
         }
@@ -33,12 +33,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             sessionId: await SessionIdValidater(context),
-            subjectList: subjectList
+            problemList: problemList
         }
     }
 };
 
-const Delete = (props: ISessionId & { subjectList: { "hash": string, "name": string }[] }) => {
+const Delete = (props: ISessionId & { problemList: { "hash": string, "problem_body": string }[] }) => {
     return (
         <ManagementCommon pageTitle="教科削除" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId} disableRightButton>
             <div style={{display : "flex",alignItems:"center", flexDirection : "column"}}>
@@ -46,8 +46,8 @@ const Delete = (props: ISessionId & { subjectList: { "hash": string, "name": str
                 <Typography variant="body1">以下の教科を削除します。</Typography>
                 <List>
                     {(() => {
-                        return props.subjectList.map((r) => {
-                            return <><ListItem><ListItemText primary={r.name}></ListItemText></ListItem><Divider/></>
+                        return props.problemList.map((r) => {
+                            return <><ListItem><ListItemText primary={r.problem_body}></ListItemText></ListItem><Divider/></>
                         });
                     })()}
                 </List>
@@ -57,17 +57,17 @@ const Delete = (props: ISessionId & { subjectList: { "hash": string, "name": str
                     style={{ width: "100%" }}
                     onClick={async () => {
                         await fetch(
-                            "/api/Subject",
+                            "/api/Problem",
                             {
                                 method : "delete",
-                                body : JSON.stringify(props.subjectList)
+                                body : JSON.stringify(props.problemList)
                             }
                         ).then(() => {
-                            router.push("/Manage/Subject/List");
+                            router.push("/Manage/Problem/List");
                         }).catch((err) => {
                             alert(err);
                             console.log(err);
-                            router.push("/Manage/Subject/List");
+                            router.push("/Manage/Problem/List");
                         });
                     }}>
                     {"削除"}

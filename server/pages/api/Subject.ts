@@ -4,10 +4,24 @@ import db from "../../models";
 import SessionIdValidater from "../../utils/SessionIdValidater";
 import crypto from "crypto";
 import { Op } from "sequelize";
+import AjvValidater from "../../utils/AjvValidater";
+import SubjectFormJson from "../../form_schemas/SubjectForm.json";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     if(await SessionIdValidater(undefined,req.cookies.sessionId) != `Unauthorised`){
+        let isValid = false;
+        if(req.method == "POST"){
+            const subject : SubjectForm = JSON.parse(req.body);
+            isValid = await AjvValidater(SubjectFormJson.definitions.SubjectForm_POST,subject);
+        }else if(req.method == "PUT"){
+            const subject : SubjectForm = JSON.parse(req.body);
+            isValid = await AjvValidater(SubjectFormJson.definitions.SubjectForm_PUT,subject);
+        }else if(req.method == "DELETE"){
+            const subject : SubjectForm[] = JSON.parse(req.body);
+            isValid = await AjvValidater(SubjectFormJson.definitions.SubjectForm_DELETE,subject);
+        }
+
         if(req.method == "POST"){
             const subject : SubjectForm = JSON.parse(req.body);
             // 登録する処理

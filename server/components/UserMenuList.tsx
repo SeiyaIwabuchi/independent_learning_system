@@ -1,44 +1,42 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List } from "@material-ui/core";
 import React, { Dispatch, SetStateAction } from "react";
-import { SubjectForm } from "../form_schemas/ts/SubjectForm";
+import { UserForm } from "../form_schemas/ts/UserForm";
 
 export interface IElemetPorps{
-    subject:{
-        hash : string,
+    user:{
+        id : number,
         name : string,
-        description? : string,
     },
     deleteList : [
-        string[], 
-        Dispatch<SetStateAction<string[]>>
+        number[], 
+        Dispatch<SetStateAction<number[]>>
        ]
 }
 
-const SubjectMenuListElemet = (props : IElemetPorps) => {
+const UserMenuListElemet = (props : IElemetPorps) => {
     return (
         <>
             <ListItem 
                 button={true} 
                 component="a" 
-                href={`/Manage/Subject/Edit?&hash=${props.subject.hash}`}
-                key={props.subject.hash}
+                href={`/Manage/User/Edit?&id=${props.user.id}`}
+                key={props.user.id}
             >
                 <ListItemText
-                    primary={props.subject.name}
-                    secondary={props.subject.description!}
+                    primary={props.user.name}
                 />
                 <ListItemSecondaryAction>
                     <input type="checkbox" onChange={
                         (event) => {
                             let deleteList = props.deleteList[0].slice();
-                            if(deleteList.indexOf(props.subject.hash) == -1)
-                                deleteList.push(props.subject.hash);
+                            if(deleteList.indexOf(props.user.id) == -1)
+                                deleteList.push(props.user.id);
                             else
-                                deleteList.splice( deleteList.indexOf(props.subject.hash), 1);
+                                deleteList.splice( deleteList.indexOf(props.user.id), 1);
                             props.deleteList[1](deleteList);
                         }
                     }
-                    checked={ props.deleteList[0].indexOf(props.subject.hash) != -1 }
+                    checked={ props.deleteList[0].indexOf(props.user.id) != -1 }
                     />
                 </ListItemSecondaryAction>
             </ListItem>
@@ -46,19 +44,19 @@ const SubjectMenuListElemet = (props : IElemetPorps) => {
     );
 };
 
-const SubjectMenuList = (
+const UserMenuList = (
     props : {
-        menuList : SubjectForm[],
+        menuList : UserForm[],
         deleteList:[
-            string[], 
-            Dispatch<SetStateAction<string[]>>
+            number[], 
+            Dispatch<SetStateAction<number[]>>
         ]
     }) => {
     const menu : JSX.Element[] = [];
     for(let i=0;i<props.menuList.length;i++){
         let prop = props.menuList[i];
         menu.push(
-            <SubjectMenuListElemet subject={prop} deleteList={props.deleteList} key={prop.hash}/>
+            <UserMenuListElemet user={prop} deleteList={props.deleteList}/>
         );
         if(i < props.menuList.length -1)
             menu.push(<Divider />);
@@ -70,4 +68,4 @@ const SubjectMenuList = (
     )
 };
 
-export default SubjectMenuList;
+export default UserMenuList;

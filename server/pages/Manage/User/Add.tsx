@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Form from "../../../components/Form";
 import ManagementCommon, { LAYOUT_TYPE } from "../../../components/ManagementCommon";
 import SessionIdValidater from "../../../utils/SessionIdValidater";
-import SubjectAddFormSchema from "../../../form_schemas/SubjectAddFormShcema.json";
+import UserAddFormSchema from "../../../form_schemas/UserAddFormShcema.json";
 import router from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -20,28 +20,29 @@ interface IProps{
 
 const Add = (props : IProps) => {
     // title: string; leftButton?: Element | undefined; rightButton?: Element | undefined;
+    
     const onAddButtonClicked = async () => {
-            await fetch("/api/Subject",{
+            await fetch("/api/User",{
                 method : "post",
                 body : JSON.stringify(form[0])
             }).then(() => {
-                router.push(`/Manage/Subject/List`);
+                router.push(`/Manage/User/List`);
             }).catch((err) => {
                 alert(err);
-                router.push(`/Manage/Subject/List`);
+                router.push(`/Manage/User/List`);
             });
     };
 
     const form = useState({name : "", description : ""});
     return (
         <ManagementCommon 
-        pageTitle="教科追加" 
+        pageTitle="ユーザ追加" 
         pageLayoutType={LAYOUT_TYPE.EDIT} 
         sessionId={props.sessionId}
         onRightButtonClicked={ onAddButtonClicked }
         >
             <Form
-            schema={SubjectAddFormSchema.definitions.SubjectAddFormShcema}
+            schema={UserAddFormSchema.definitions.UserAddFormShcema}
             onSubmit={ onAddButtonClicked }
             onChange={(e)=>{form[1](e)}}
             formData={form[0]}

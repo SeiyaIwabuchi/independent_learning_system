@@ -1,0 +1,71 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "UserForm": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "title": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "title": "name"
+                }
+            },
+            "required": [
+                "id",
+                "name"
+            ]
+        },
+        "UserForm_PUT": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "title": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "title": "name"
+                }
+            },
+            "required": [
+                "id",
+                "name"
+            ]
+        },
+        "UserForm_POST": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "title": "name"
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "UserForm_DELETE": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "title": "id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "name"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            }
+        }
+    }
+}

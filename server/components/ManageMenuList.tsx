@@ -12,7 +12,7 @@ export interface IElemetPorps{
 const ManageMenuListElemet = (props : IElemetPorps) => {
     return (
         <>
-            <ListItem button={true} component="a" href={`${props.destinationURL  || "#" }`}>
+            <ListItem button={true} component="a" href={`${props.destinationURL  || "#" }`} key={props.primaryText}>
                 <ListItemText
                     primary={props.primaryText}
                     secondary={props.secondaryText || null}

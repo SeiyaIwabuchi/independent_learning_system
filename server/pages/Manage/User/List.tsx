@@ -2,23 +2,23 @@ import { MenuItem, Typography } from "@material-ui/core";
 import { GetServerSideProps } from "next";
 import router from "next/router";
 import React, { useState } from "react";
-import SubjectMenuList from "../../../components/SubjectMenuList";
 import { ISessionId } from "../../../query_param_shemas/SessionId";
 import SessionIdValidater from "../../../utils/SessionIdValidater";
 import ManagementCommon, { LAYOUT_TYPE } from "../../../components/ManagementCommon";
 import db from "../../../models";
-import { SubjectForm } from "../../../form_schemas/ts/SubjectForm";
+import { UserForm } from "../../../form_schemas/ts/UserForm";
+import UserMenuList from "../../../components/UserMenuList";
+import { ListItemText } from "@material-ui/core";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    let subjects : SubjectForm[] = [];
-    await db.t_subjects.findAll()
-    .then((subjects_) => {
-        for(let r of subjects_){
-            subjects.push(
+    let users : UserForm[] = [];
+    await db.t_users.findAll()
+    .then((users_) => {
+        for(let r of users_){
+            users.push(
                 {
-                    hash : r.hash,
+                    id : r.id,
                     name : r.name,
-                    description : r.description
                 }
             );
         }
@@ -26,27 +26,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             sessionId: await SessionIdValidater(context),
-            subjects : subjects
+            users : users
         }
     }
 };
 
-const List = (props: ISessionId & {subjects : SubjectForm[]}) => {
+const List = (props: ISessionId & {users : UserForm[]}) => {
     
-    const deleteList = useState<string[]>([]);
+    const deleteList = useState<number[]>([]);
 
     return (
         <>
             <ManagementCommon 
-            pageTitle="教科管理" 
+            pageTitle="管理ユーザの管理" 
             pageLayoutType={LAYOUT_TYPE.MENU}
             sessionId={props.sessionId}
-            AddUrl="/Manage/Subject/Add"
+            AddUrl="/Manage/User/Add"
             MenuList={[
                 <MenuItem onClick={() => {
-                    router.push(`/Manage/Subject/Delete?list=${JSON.stringify(deleteList[0])}`);
-                }}>
-                    選択項目削除
+                    router.push(`/Manage/User/Delete?list=${JSON.stringify(deleteList[0])}`);
+                }} key={"DeleteSelectedItem"}>
+                    <ListItemText primary="選択ユーザ削除"></ListItemText>
                 </MenuItem>
             ]}
             >
@@ -59,9 +59,9 @@ const List = (props: ISessionId & {subjects : SubjectForm[]}) => {
                         justifyContent: "space-around"
                     }}
                 >
-                    <Typography variant="h4" align="center">教科管理</Typography>
-                    <Typography variant="subtitle1" align="center">教科の追加、変更、削除ができます。</Typography>
-                    <Typography variant="subtitle1" align="center">以下、教科一覧です。</Typography>
+                    <Typography variant="h4" align="center">管理ユーザの管理</Typography>
+                    <Typography variant="subtitle1" align="center">管理ユーザの追加、変更、削除ができます。</Typography>
+                    <Typography variant="subtitle1" align="center">以下、ユーザです。</Typography>
                 </div>
                 <div
                     style={{
@@ -70,7 +70,7 @@ const List = (props: ISessionId & {subjects : SubjectForm[]}) => {
                         justifyContent: "space-between",
                         padding: "10px"
                     }}>
-                    <SubjectMenuList menuList={props.subjects} deleteList={deleteList}/>
+                    <UserMenuList menuList={props.users} deleteList={deleteList}/>
                 </div>
             </ManagementCommon>
         </>

@@ -44,12 +44,6 @@ const Top = (props: ISessionId) => {
         },
     ];
 
-    const snackbar = {
-        state: snackbarState,
-        setState: setSnackbarState,
-        msg: snackbarMsg
-    }
-
     useEffect(() => {
         if (props.sessionId == "Unauthorised") {
             setTimeout(() => {

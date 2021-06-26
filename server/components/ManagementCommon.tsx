@@ -128,14 +128,14 @@ const ManagementCommon = (props: IProps) => {
                 <Drawer anchor="left" open={isDrawerOpen[0]} onClose={() => isDrawerOpen[1](false)}>
                     <div style={{ marginTop: "50px" }} />
                     <Divider />
-                    <ListItem button key={"goManageTop"}>
-                        <ListItemIcon onClick={() => { router.push(`/Manage/Top`) }}>
+                    <ListItem button key={"goManageTop"}  onClick={() => { router.push(`/Manage/Top`) }}>
+                        <ListItemIcon>
                             <SettingsIcon />
                         </ListItemIcon>
                         <ListItemText primary="管理トップ"></ListItemText>
                     </ListItem>
-                    <ListItem button key={"logout"}>
-                        <ListItemIcon onClick={() => {router.push("/Manage/Logout?goto=/Manage/LoginForm"); }}>
+                    <ListItem button key={"logout"} onClick={() => {router.push("/Manage/Logout?goto=/Manage/LoginForm"); }}>
+                        <ListItemIcon>
                             <ExitToAppIcon />
                         </ListItemIcon>
                         <ListItemText primary="ログアウト"></ListItemText>
