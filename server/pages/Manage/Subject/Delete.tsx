@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const Delete = (props: ISessionId & { subjectList: { "hash": string, "name": string }[] }) => {
     return (
-        <ManagementCommon pageTitle="教科追加" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId}>
+        <ManagementCommon pageTitle="教科追加" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId} disableRightButton>
             <div style={{display : "flex",alignItems:"center", flexDirection : "column"}}>
                 <Typography variant="h3">確認</Typography>
                 <Typography variant="body1">以下の教科を削除します。</Typography>

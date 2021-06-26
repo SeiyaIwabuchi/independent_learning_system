@@ -27,24 +27,30 @@ const Add = (props : IProps) => {
     const appbar = {
         title : "教科追加"
     }
+    
+    const onAddButtonClicked = async () => {
+            await fetch("/api/Subject",{
+                method : "post",
+                body : JSON.stringify(form[0])
+            }).then(() => {
+                router.push(`/Manage/Subject/List`);
+            }).catch((err) => {
+                alert(err);
+                router.push(`/Manage/Subject/List`);
+            });
+    };
+
     const form = useState({name : "", description : ""});
     return (
-        <ManagementCommon pageTitle="教科追加" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId}>
+        <ManagementCommon 
+        pageTitle="教科追加" 
+        pageLayoutType={LAYOUT_TYPE.EDIT} 
+        sessionId={props.sessionId}
+        onRightButtonClicked={ onAddButtonClicked }
+        >
             <Form
             schema={SubjectAddFormSchema.definitions.SubjectAddFormShcema}
-            onSubmit={
-                async () => {
-                    await fetch("/api/Subject",{
-                        method : "post",
-                        body : JSON.stringify(form[0])
-                    }).then(() => {
-                        router.push(`/Manage/Subject/List`);
-                    }).catch((err) => {
-                        alert(err);
-                        router.push(`/Manage/Subject/List`);
-                    });
-                }
-            }
+            onSubmit={ onAddButtonClicked }
             onChange={(e)=>{form[1](e)}}
             formData={form[0]}
             submitButtonName="追加"

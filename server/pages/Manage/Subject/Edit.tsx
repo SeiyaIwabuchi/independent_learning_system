@@ -39,29 +39,26 @@ interface IProps{
 
 const Edit = (props : IProps) => {
     const form = useState(props.subject);
+    const onCommitButton = async () => {
+        await fetch("/api/Subject",{
+            method : "put",
+            body : JSON.stringify(form[0])
+        }).then(() => {
+            router.push(`/Manage/Subject/List`);
+        }).catch((err) => {
+            alert(err);
+            router.push(`/Manage/Subject/List`);
+        });
+    };
     return (
         <ManagementCommon 
             pageTitle="教科編集" 
             pageLayoutType={LAYOUT_TYPE.EDIT} 
             sessionId={props.sessionId} 
-            onRightButtonClicked={() => {
-                router.push(`/Manage/Subject/List`);
-        }}>
+            onRightButtonClicked={ onCommitButton }>
             <Form
             schema={SubjectAddFormSchema.definitions.SubjectAddFormShcema}
-            onSubmit={
-                async () => {
-                    await fetch("/api/Subject",{
-                        method : "put",
-                        body : JSON.stringify(form[0])
-                    }).then(() => {
-                        router.push(`/Manage/Subject/List`);
-                    }).catch((err) => {
-                        alert(err);
-                        router.push(`/Manage/Subject/List`);
-                    });
-                }
-            }
+            onSubmit={ onCommitButton }
             onChange={(e)=>{form[1](e)}}
             formData={form[0]}
             submitButtonName="完了"
