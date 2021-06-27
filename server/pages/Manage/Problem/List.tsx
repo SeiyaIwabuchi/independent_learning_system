@@ -55,11 +55,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             sessionId: await SessionIdValidater(context),
             problems: problems,
             subjects: subjects,
+            selectedSubject: subjectHash || ""
         }
     }
 };
 
-const List = (props: ISessionId & { problems: ProblemForm[] } & { subjects: SubjectForm[] }) => {
+const List = (props: ISessionId & { problems: ProblemForm[], subjects: SubjectForm[],selectedSubject: string }) => {
 
     const deleteList = useState<string[]>([]);
 
@@ -104,6 +105,7 @@ const List = (props: ISessionId & { problems: ProblemForm[] } & { subjects: Subj
                             onChange={(event) => {
                                 router.push(`${router.pathname}?subjectHash=${event.target.value}`)
                             }}
+                            value={props.selectedSubject}
                         >
                             <MenuItem value="">
                                 <em>未選択</em>

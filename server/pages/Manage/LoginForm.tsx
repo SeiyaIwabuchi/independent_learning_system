@@ -63,6 +63,7 @@ let LoginForm = (props : {preSessionId : string}) => {
                     }}
                     onApiError={(err) => {
                         console.log(err);
+                        alert(err);
                     }}
                     uiSchema={{
                         "password" : {

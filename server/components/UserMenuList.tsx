@@ -1,4 +1,4 @@
-import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List } from "@material-ui/core";
+import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
 import React, { Dispatch, SetStateAction } from "react";
 import { UserForm } from "../form_schemas/ts/UserForm";
 
@@ -26,7 +26,7 @@ const UserMenuListElemet = (props : IElemetPorps) => {
                     primary={props.user.name}
                 />
                 <ListItemSecondaryAction>
-                    <input type="checkbox" onChange={
+                    <Checkbox onChange={
                         (event) => {
                             let deleteList = props.deleteList[0].slice();
                             if(deleteList.indexOf(props.user.id) == -1)

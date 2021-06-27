@@ -1,4 +1,4 @@
-import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List } from "@material-ui/core";
+import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
 import React, { Dispatch, SetStateAction } from "react";
 import { ProblemForm } from "../form_schemas/ts/ProblemForm";
 
@@ -26,7 +26,7 @@ const ProblemMenuListElemet = (props : IElemetPorps) => {
                     primary={props.problem.problem_body}
                 />
                 <ListItemSecondaryAction>
-                    <input type="checkbox" onChange={
+                    <Checkbox onChange={
                         (event) => {
                             let deleteList = props.deleteList[0].slice();
                             if(deleteList.indexOf(props.problem.hash) == -1)

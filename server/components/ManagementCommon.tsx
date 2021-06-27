@@ -32,10 +32,10 @@ interface IProps {
     disableRightButton?: boolean
     onRightButtonClicked?: (event: any) => any
     children?: ReactNode,
-    MenuList? : JSX.Element[]
+    MenuList?: JSX.Element[]
 };
 
-export const UserContext = createContext({sessionId:``});
+export const UserContext = createContext({ sessionId: `` });
 
 const ManagementCommon = (props: IProps) => {
     const appbar = { title: props.pageTitle };
@@ -124,22 +124,24 @@ const ManagementCommon = (props: IProps) => {
     });
     return (
         <OuterFrame appbar={appbar} snackbar={props.snackBar || snackbar}>
-            <UserContext.Provider value={{sessionId:props.sessionId}}>
+            <UserContext.Provider value={{ sessionId: props.sessionId }}>
                 <Drawer anchor="left" open={isDrawerOpen[0]} onClose={() => isDrawerOpen[1](false)}>
                     <div style={{ marginTop: "50px" }} />
                     <Divider />
-                    <ListItem button key={"goManageTop"}  onClick={() => { router.push(`/Manage/Top`) }}>
-                        <ListItemIcon>
-                            <SettingsIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="管理トップ"></ListItemText>
-                    </ListItem>
-                    <ListItem button key={"logout"} onClick={() => {router.push("/Manage/Logout?goto=/Manage/LoginForm"); }}>
-                        <ListItemIcon>
-                            <ExitToAppIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="ログアウト"></ListItemText>
-                    </ListItem>
+                    {(() => [
+                        { name: "管理トップ", url: "/Manage/Top",icon : (<SettingsIcon />) },
+                        { name: "教科管理", url: "/Manage/Subject/List",icon : (<SettingsIcon />) },
+                        { name: "問題管理", url: "/Manage/Problem/List",icon : (<SettingsIcon />) },
+                        { name: "管理ユーザの管理", url: "/Manage/User/List",icon : (<SettingsIcon />) },
+                        { name: "ログアウト", url: "/Manage/Logout?goto=/Manage/LoginForm",icon : (<ExitToAppIcon />) },
+                    ].map(e => (
+                        <ListItem button key={e.name} onClick={() => { router.push(e.url); }}>
+                            <ListItemIcon>
+                                {e.icon}
+                            </ListItemIcon>
+                            <ListItemText primary={e.name}></ListItemText>
+                        </ListItem>
+                    )))()}
                 </Drawer>
                 <Menu
                     id="simple-menu"

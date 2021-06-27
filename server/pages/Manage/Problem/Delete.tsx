@@ -40,10 +40,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const Delete = (props: ISessionId & { problemList: { "hash": string, "problem_body": string }[] }) => {
     return (
-        <ManagementCommon pageTitle="教科削除" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId} disableRightButton>
+        <ManagementCommon pageTitle="問題削除" pageLayoutType={LAYOUT_TYPE.EDIT} sessionId={props.sessionId} disableRightButton>
             <div style={{display : "flex",alignItems:"center", flexDirection : "column"}}>
                 <Typography variant="h3">確認</Typography>
-                <Typography variant="body1">以下の教科を削除します。</Typography>
+                <Typography variant="body1">以下の問題を削除します。</Typography>
                 <List>
                     {(() => {
                         return props.problemList.map((r) => {

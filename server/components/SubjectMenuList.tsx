@@ -1,4 +1,4 @@
-import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List } from "@material-ui/core";
+import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
 import React, { Dispatch, SetStateAction } from "react";
 import { SubjectForm } from "../form_schemas/ts/SubjectForm";
 
@@ -28,7 +28,7 @@ const SubjectMenuListElemet = (props : IElemetPorps) => {
                     secondary={props.subject.description!}
                 />
                 <ListItemSecondaryAction>
-                    <input type="checkbox" onChange={
+                    <Checkbox onChange={
                         (event) => {
                             let deleteList = props.deleteList[0].slice();
                             if(deleteList.indexOf(props.subject.hash) == -1)

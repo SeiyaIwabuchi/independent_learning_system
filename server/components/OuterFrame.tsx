@@ -19,7 +19,7 @@ interface IProps {
 
 const OuterFrame = (props: IProps) => {
     return (
-        <div style={{maxWidth:"50%",margin:"0 auto"}}>
+        <div style={{maxWidth:"400px",margin:"0 auto"}}>
             <AppBar position="fixed">
                 <Toolbar>
                     {props.appbar.leftButton}
