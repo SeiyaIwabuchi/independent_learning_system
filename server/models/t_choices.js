@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.t_problems,{foreignKey : "id"})
     }
   };
   t_choices.init({

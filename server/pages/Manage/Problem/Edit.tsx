@@ -7,20 +7,103 @@ import { Typography } from "@material-ui/core";
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { Form } from "react-final-form";
 import { Checkboxes, Select, TextField } from "mui-rff";
+import { useState } from "react";
+import { ProblemForm } from "../../../form_schemas/ts/ProblemForm";
+import db, { t_problems } from "../../../models";
+
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    const problemHash: string = context.query.problemHash as string;
+    let problem: any;
+    let choices: { id: number }[] = [];
+    await db.t_problems.findOne({
+        where: {
+            hash: problemHash
+        },
+        raw: true,
+    }).then(e => problem = JSON.parse(JSON.stringify(e)));
+    await db.t_choices.findAll({
+        where: {
+            problem_id: problem.id
+        },
+    }).then(e => {
+        choices = []
+        let choicesObj:{[key:number]:any} = {};
+        for(let a of e){
+            choicesObj[a.id] = a;
+        }
+        console.log(choicesObj);
+        let choices_a:number[] = [];
+        for(let n of e) choices_a.push(n.id);
+        choices_a.sort((a, b) => a > b ? 1 : -1);
+        choices = [];
+        for(let t of choices_a) choices.push(choicesObj[t]);
+        choices = JSON.parse(JSON.stringify(choices))
+    });
     return {
         props: {
             sessionId: await SessionIdValidater(context),
+            problem: problem,
+            choices: choices
         }
     }
 };
 
 interface IProps {
     sessionId: string,
+    problem: {
+        id: number,
+        hahs: string,
+        problem_type: number,
+        answer_type: number,
+        problem_body: string
+    },
+    choices: {
+        id: number,
+        choice_text: string,
+        collect_flag: boolean
+    }[]
+}
+
+const ChoicesList = (
+    props: {
+        choices: [{
+            id: number,
+            choice_text: string,
+            collect_flag: boolean
+        }[],
+            React.Dispatch<React.SetStateAction<{
+                id: number,
+                choice_text: string,
+                collect_flag: boolean
+            }[]>>
+        ]
+    }) => {
+    return (
+        <>
+            {
+                props.choices[0].map((e) => (
+                    <div style={{ display: "flex" }}>
+                        <Checkboxes name={`isCollect_${e.id}`} style={{ flexGrow: 15 }} data={{ label: "", value: e.collect_flag }} />
+                        <TextField name={`choicesText_${e.id}`} style={{ flexGrow: 84, marginBottom: "15px" }} label={`選択肢${e.id}`} variant="outlined" value={e.choice_text}/>
+                        <IconButton style={{ flexGrow: 1, marginBottom: "15px" }} onClick={
+                            () => {
+                                props.choices[1](
+                                    props.choices[0].filter(ee => e.id != ee.id)
+                                );
+                            }
+                        }>
+                            <DeleteForeverIcon />
+                        </IconButton>
+                    </div>
+                ))
+            }
+        </>
+    )
 }
 
 const Edit = (props: IProps) => {
+    const choicesList = useState(props.choices);
     return (
         <ManagementCommon
             pageTitle="教科編集"
@@ -28,8 +111,21 @@ const Edit = (props: IProps) => {
             sessionId={props.sessionId}
             onRightButtonClicked={() => { }}>
             <Form
-                onSubmit={() => { }}
-                initialValues={{ problemType : 0 }}
+                onSubmit={async (values, form, callback) => {
+                    await fetch("/api/Problem", {
+                        method: "PUT",
+                        body: JSON.stringify(values)
+                    }).catch(err => {
+                        console.log(err);
+                        alert(err);
+                    });
+                }}
+                initialValues={{
+                    problemType: props.problem.problem_type,
+                    choiceType: props.problem.answer_type,
+                    problemBody: props.problem.problem_body,
+
+                }}
                 render={({ handleSubmit, values }) => (
                     <form
                         onSubmit={handleSubmit}
@@ -38,24 +134,28 @@ const Edit = (props: IProps) => {
                             flexDirection: "column",
                             justifyContent: "space-between",
                             padding: "10px",
-                            height: "1200px",
                         }}>
                         <Typography variant="body1">問題にはテキストか画像を使用できます。</Typography>
+                        <div style={{ margin: "15px" }}></div>
                         <Select name="problemType" formControlProps={{ variant: "outlined" }}>
                             <MenuItem value="0" selected>テキスト</MenuItem>
                             <MenuItem value="1">画像</MenuItem>
                         </Select>
+                        <div style={{ margin: "15px" }}></div>
                         {
                             values.problemType == "0" ?
                                 (<TextField name="problemBody" variant="outlined" label="問題文" multiline />) :
                                 (
                                     <>
                                         <Button variant="contained" color="primary">画像追加</Button>
+                                        <div style={{ margin: "15px" }}></div>
                                         <img src={"http://via.placeholder.com/500x300"}></img>
                                     </>
                                 )
                         }
+                        <div style={{ margin: "15px" }}></div>
                         <Typography variant="body1">回答方法には選択式とテキスト入力が使えます。</Typography>
+                        <div style={{ margin: "15px" }}></div>
                         <Select name="choiceType" formControlProps={{ variant: "outlined" }} >
                             <MenuItem value="">
                                 <em>未選択</em>
@@ -63,37 +163,35 @@ const Edit = (props: IProps) => {
                             <MenuItem value="0">選択式</MenuItem>
                             <MenuItem value="1">テキスト</MenuItem>
                         </Select>
+                        <div style={{ margin: "15px" }}></div>
                         {values.choiceType == "0" ? (
                             <>
-                            <Typography variant="body1">回答用の選択肢</Typography>
-                            <div style={{ display: "flex" }}>
-                                <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>答え</Typography>
-                                <Typography variant="body1" style={{ flexGrow: 16, textAlign: "center" }}>選択肢</Typography>
-                                <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>削除</Typography>
-                            </div>
-                            <List>
-                            {(() => [
-                                { id: 1, isCollect: false, choiceText: "選択肢1" },
-                                { id: 2, isCollect: false, choiceText: "選択肢2" },
-                                { id: 3, isCollect: false, choiceText: "選択肢3" },
-                                { id: 4, isCollect: false, choiceText: "選択肢4" },
-                            ].map((e) => (
+                                <Typography variant="body1">回答用の選択肢</Typography>
+                                <div style={{ margin: "15px" }}></div>
                                 <div style={{ display: "flex" }}>
-                                    <Checkboxes name={`isCollect_${e.id}`} style={{ flexGrow: 15, margin: "auto 0" }} data={{ label: "", value: true }} />
-                                    <TextField name={`choicesText_${e.id}`} style={{ flexGrow: 84 }} label={`選択肢${e.id}`} variant="outlined" />
-                                    <IconButton style={{ flexGrow: 1 }}>
-                                        <DeleteForeverIcon />
-                                    </IconButton>
+                                    <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>答え</Typography>
+                                    <Typography variant="body1" style={{ flexGrow: 16, textAlign: "center" }}>選択肢</Typography>
+                                    <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>削除</Typography>
                                 </div>
-                            )))()}
-                        </List>
-                        <Button variant="contained" color="primary" >選択肢追加</Button>
-                        </>
+                                <List>
+                                    <ChoicesList choices={choicesList} />
+                                </List>
+                                <Button variant="contained" color="primary" onClick={() => {
+                                    const tlist = choicesList[0].slice();
+                                    tlist.push({
+                                        id: Math.max(...choicesList[0].map(e => e.id)) + 1,
+                                        collect_flag: false,
+                                        choice_text: ""
+                                    });
+                                    choicesList[1](tlist);
+                                }
+                                }>選択肢追加</Button>
+                            </>
                         ) : (
                             <TextField name="collectText" variant="outlined" label="正解のテキスト"></TextField>
                         )}
-                        <Button variant="contained" color="secondary">問題追加</Button>
-                        {(() => { console.log(values); })()}
+                        <div style={{ margin: "15px" }}></div>
+                        <Button variant="contained" color="secondary" type="submit">問題追加</Button>
                     </form>
                 )}
             />

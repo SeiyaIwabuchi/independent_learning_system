@@ -7,6 +7,9 @@ export interface IElemetPorps{
         hash : string,
         problem_body : string | null,
     },
+    subject:{
+        hash : string,
+    },
     deleteList : [
         string[], 
         Dispatch<SetStateAction<string[]>>
@@ -19,7 +22,7 @@ const ProblemMenuListElemet = (props : IElemetPorps) => {
             <ListItem 
                 button={true} 
                 component="a" 
-                href={`/Manage/Problem/Edit?&hash=${props.problem.hash}`}
+                href={`/Manage/Problem/Edit?problemHash=${props.problem.hash}`}
                 key={props.problem.hash}
             >
                 <ListItemText
@@ -50,13 +53,16 @@ const ProblemMenuList = (
         deleteList:[
             string[], 
             Dispatch<SetStateAction<string[]>>
-        ]
+        ],
+        subject:{
+            hash : string,
+        },
     }) => {
     const menu : JSX.Element[] = [];
     for(let i=0;i<props.menuList.length;i++){
         let prop = props.menuList[i];
         menu.push(
-            <ProblemMenuListElemet problem={prop} deleteList={props.deleteList} key={prop.hash}/>
+            <ProblemMenuListElemet subject={props.subject} problem={prop} deleteList={props.deleteList} key={prop.hash}/>
         );
         if(i < props.menuList.length -1)
             menu.push(<Divider />);

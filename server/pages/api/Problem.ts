@@ -8,6 +8,7 @@ import { Op } from "sequelize";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     if(await SessionIdValidater(undefined,req.cookies.sessionId) != `Unauthorised`){
+        console.log(req.body);
         if(req.method == "POST"){
             const user : UserForm = JSON.parse(req.body);
             // 登録する処理
@@ -19,8 +20,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 password : password
             })
             .then((r) => {
-                res.json({name : r.name});
-            })
+            res.json({dummy : "dummy"});
+        })
         }else if(req.method == "PUT"){
             const user : UserForm = JSON.parse(req.body);
             // 更新する処理
@@ -33,7 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 r!.name = user.name;
                 r!.save();
             });
-            res.json(user);
+            res.json({dummy : "dummy"});
         }else if(req.method == "DELETE"){
             const user : UserForm[] = JSON.parse(req.body);
             // 削除する処理
@@ -49,7 +50,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     rr.destroy();
                 });
             });
-            res.json(user);
+            res.json({dummy : "dummy"});
         }
     }else{
         res.json({message : "Unauthorise"})

@@ -113,7 +113,7 @@ const List = (props: ISessionId & { problems: ProblemForm[], subjects: SubjectFo
                             {props.subjects.map(sub => (<MenuItem value={sub.hash}>{sub.name}</MenuItem>))}
                         </Select>
                     </FormControl>
-                    <ProblemMenuList menuList={props.problems} deleteList={deleteList} />
+                    <ProblemMenuList menuList={props.problems} deleteList={deleteList} subject={{hash:props.selectedSubject}}/>
                 </div>
             </ManagementCommon>
         </>
