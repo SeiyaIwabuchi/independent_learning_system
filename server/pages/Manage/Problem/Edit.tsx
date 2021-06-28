@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import ManagementCommon, { LAYOUT_TYPE } from "../../../components/ManagementCommon";
 import SessionIdValidater from "../../../utils/SessionIdValidater";
-import { Button, IconButton, List, MenuItem } from "@material-ui/core";
+import { Button, IconButton, List, ListItem, MenuItem } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { Form } from "react-final-form";
@@ -63,29 +63,35 @@ const Edit = (props: IProps) => {
                             <MenuItem value="0">選択式</MenuItem>
                             <MenuItem value="1">テキスト</MenuItem>
                         </Select>
-                        <Typography variant="body1">回答用の選択肢</Typography>
-                        <div style={{ display: "flex" }}>
-                            <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>答え</Typography>
-                            <Typography variant="body1" style={{ flexGrow: 16, textAlign: "center" }}>選択肢</Typography>
-                            <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>削除</Typography>
-                        </div>
-                        {(() => [
-                            { id: 1, isCollect: false, choiceText: "選択肢1" },
-                            { id: 2, isCollect: false, choiceText: "選択肢2" },
-                            { id: 3, isCollect: false, choiceText: "選択肢3" },
-                            { id: 4, isCollect: false, choiceText: "選択肢4" },
-                        ].map((e) => (
-                            <List style={{ display: "flex" }} key={e.id}>
-
-                                <Checkboxes name={`isCollect_${e.id}`} style={{ flexGrow: 15, margin: "auto 0" }} data={{ label: "", value: true }} />
-                                <TextField name={`choicesText_${e.id}`} style={{ flexGrow: 84 }} label={`選択肢${e.id}`} variant="outlined" />
-                                <IconButton style={{ flexGrow: 1 }}>
-                                    <DeleteForeverIcon />
-                                </IconButton>
-                            </List>
-                        )))()}
+                        {values.choiceType == "0" ? (
+                            <>
+                            <Typography variant="body1">回答用の選択肢</Typography>
+                            <div style={{ display: "flex" }}>
+                                <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>答え</Typography>
+                                <Typography variant="body1" style={{ flexGrow: 16, textAlign: "center" }}>選択肢</Typography>
+                                <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>削除</Typography>
+                            </div>
+                            <List>
+                            {(() => [
+                                { id: 1, isCollect: false, choiceText: "選択肢1" },
+                                { id: 2, isCollect: false, choiceText: "選択肢2" },
+                                { id: 3, isCollect: false, choiceText: "選択肢3" },
+                                { id: 4, isCollect: false, choiceText: "選択肢4" },
+                            ].map((e) => (
+                                <div style={{ display: "flex" }}>
+                                    <Checkboxes name={`isCollect_${e.id}`} style={{ flexGrow: 15, margin: "auto 0" }} data={{ label: "", value: true }} />
+                                    <TextField name={`choicesText_${e.id}`} style={{ flexGrow: 84 }} label={`選択肢${e.id}`} variant="outlined" />
+                                    <IconButton style={{ flexGrow: 1 }}>
+                                        <DeleteForeverIcon />
+                                    </IconButton>
+                                </div>
+                            )))()}
+                        </List>
                         <Button variant="contained" color="primary" >選択肢追加</Button>
-                        <TextField name="collectText" variant="outlined" label="正解のテキスト"></TextField>
+                        </>
+                        ) : (
+                            <TextField name="collectText" variant="outlined" label="正解のテキスト"></TextField>
+                        )}
                         <Button variant="contained" color="secondary">問題追加</Button>
                         {(() => { console.log(values); })()}
                     </form>
