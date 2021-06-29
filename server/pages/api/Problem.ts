@@ -21,20 +21,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const re_isCollect_x = /isCollect_(\d+)/;
         const re_choicesText_X = /choicesText_(\d+)/;
         const problem: problem_UPDATE = {choices:[]};
-        
+        const tchoices: {collect:any[],choiceText:any[]} = {collect:[],choiceText:[]};
         for(let key of Object.keys(tproblem)){
             let matchResult = key.match(re_isCollect_x);
             if(matchResult != null){
-                tchoice.isCollect = tproblem.isCollect;
+                tchoices.collect.push(tproblem[key]);
             }
             matchResult = key.match(re_choicesText_X);
             if(matchResult != null){
-                tchoice.choiceText = tproblem.choiceText;
-                problem.choices.push(tchoice);
+                tchoices.choiceText.push(tproblem[key]);
             }
             problem[key] = tproblem[key];
         }
         console.log(problem);
+        console.log(tchoices);
         if(req.method == "POST"){
         }else if(req.method == "PUT"){
             // update t_problem
