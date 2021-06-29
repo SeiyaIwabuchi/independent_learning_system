@@ -5,53 +5,47 @@ import SessionIdValidater from "../../utils/SessionIdValidater";
 import crypto from "crypto";
 import { Op } from "sequelize";
 
+type problem_UPDATE = {
+    [key: string]:any;
+    'problem_hash'? : string;
+    'problemType'? : number;
+    'choiceType'? : number;
+    'problemBody'? : string;
+    'choices' : {isCollect?: boolean,choiceText?: string}[]
+};
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     if(await SessionIdValidater(undefined,req.cookies.sessionId) != `Unauthorised`){
-        console.log(req.body);
-        if(req.method == "POST"){
-            const user : UserForm = JSON.parse(req.body);
-            // 登録する処理
-            const password = crypto.createHash("sha256")
-            .update(user.name + new Date().getTime(), "utf8")
-            .digest("hex").slice(0,6);
-            await db.t_users.create({
-                name : user.name,
-                password : password
-            })
-            .then((r) => {
-            res.json({dummy : "dummy"});
-        })
-        }else if(req.method == "PUT"){
-            const user : UserForm = JSON.parse(req.body);
-            // 更新する処理
-            // 更新対象のレコードを取得する
-            await db.t_users.findOne({
-                where : {
-                    id : user.id
-                }
-            }).then((r)=>{
-                r!.name = user.name;
-                r!.save();
-            });
-            res.json({dummy : "dummy"});
-        }else if(req.method == "DELETE"){
-            const user : UserForm[] = JSON.parse(req.body);
-            // 削除する処理
-            //削除対象のレコードを取得する
-            await db.t_users.findAll({
-                where : {
-                    id : {
-                        [Op.in] : user.map((r) => r.id)
-                    }
-                }
-            }).then((r) => {
-                r!.forEach((rr) => {
-                    rr.destroy();
-                });
-            });
-            res.json({dummy : "dummy"});
+        const tproblem = JSON.parse(req.body);
+        const re_isCollect_x = /isCollect_(\d+)/;
+        const re_choicesText_X = /choicesText_(\d+)/;
+        const problem: problem_UPDATE = {choices:[]};
+        
+        for(let key of Object.keys(tproblem)){
+            let matchResult = key.match(re_isCollect_x);
+            if(matchResult != null){
+                tchoice.isCollect = tproblem.isCollect;
+            }
+            matchResult = key.match(re_choicesText_X);
+            if(matchResult != null){
+                tchoice.choiceText = tproblem.choiceText;
+                problem.choices.push(tchoice);
+            }
+            problem[key] = tproblem[key];
         }
+        console.log(problem);
+        if(req.method == "POST"){
+        }else if(req.method == "PUT"){
+            // update t_problem
+            // db.t_problems.findOne({
+            //     where : {
+            //         hash: 
+            //     }
+            // })
+        }else if(req.method == "DELETE"){
+        }
+        res.json({message:"dummy"});
     }else{
         res.json({message : "Unauthorise"})
     }

@@ -5,7 +5,7 @@ import SessionIdValidater from "../../../utils/SessionIdValidater";
 import { Button, IconButton, List, ListItem, MenuItem } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import { Form } from "react-final-form";
+import { Field, Form } from "react-final-form";
 import { Checkboxes, Select, TextField } from "mui-rff";
 import { useState } from "react";
 import { ProblemForm } from "../../../form_schemas/ts/ProblemForm";
@@ -32,7 +32,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         for(let a of e){
             choicesObj[a.id] = a;
         }
-        console.log(choicesObj);
         let choices_a:number[] = [];
         for(let n of e) choices_a.push(n.id);
         choices_a.sort((a, b) => a > b ? 1 : -1);
@@ -53,7 +52,7 @@ interface IProps {
     sessionId: string,
     problem: {
         id: number,
-        hahs: string,
+        hash: string,
         problem_type: number,
         answer_type: number,
         problem_body: string
@@ -85,7 +84,7 @@ const ChoicesList = (
                 props.choices[0].map((e) => (
                     <div style={{ display: "flex" }}>
                         <Checkboxes name={`isCollect_${e.id}`} style={{ flexGrow: 15 }} data={{ label: "", value: e.collect_flag }} />
-                        <TextField name={`choicesText_${e.id}`} style={{ flexGrow: 84, marginBottom: "15px" }} label={`選択肢${e.id}`} variant="outlined" value={e.choice_text}/>
+                        <TextField name={`choicesText_${e.id}`} style={{ flexGrow: 84, marginBottom: "15px" }} label={`選択肢${e.id}`} variant="outlined" />
                         <IconButton style={{ flexGrow: 1, marginBottom: "15px" }} onClick={
                             () => {
                                 props.choices[1](
@@ -103,6 +102,16 @@ const ChoicesList = (
 }
 
 const Edit = (props: IProps) => {
+    /*
+    {
+        choicesText_1 : 
+    }
+    */
+    const choicesObj_:any = {};
+    for(let i=0;i<props.choices.length;i++){
+        choicesObj_[`isCollect_${props.choices[i].id}`] = props.choices[i].collect_flag;
+        choicesObj_[`choicesText_${props.choices[i].id}`] = props.choices[i].choice_text;
+    }
     const choicesList = useState(props.choices);
     return (
         <ManagementCommon
@@ -121,10 +130,11 @@ const Edit = (props: IProps) => {
                     });
                 }}
                 initialValues={{
+                    problem_hash: props.problem.hash,
                     problemType: props.problem.problem_type,
                     choiceType: props.problem.answer_type,
                     problemBody: props.problem.problem_body,
-
+                    ...choicesObj_
                 }}
                 render={({ handleSubmit, values }) => (
                     <form
@@ -135,6 +145,7 @@ const Edit = (props: IProps) => {
                             justifyContent: "space-between",
                             padding: "10px",
                         }}>
+                            <Field name="problem_hash" component="input" type="hidden"/>
                         <Typography variant="body1">問題にはテキストか画像を使用できます。</Typography>
                         <div style={{ margin: "15px" }}></div>
                         <Select name="problemType" formControlProps={{ variant: "outlined" }}>
