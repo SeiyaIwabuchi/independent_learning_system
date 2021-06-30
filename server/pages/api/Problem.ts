@@ -50,7 +50,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     }else{
                         await db.t_choices.create({
                             choice_text: e.choice_text,
-                            collect_flag: e.collect_flag
+                            collect_flag: e.collect_flag,
+                            problem_id: problemId
                         });
                     }
                 })

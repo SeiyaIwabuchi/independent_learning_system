@@ -63,6 +63,42 @@ interface IProps {
     }[]
 }
 
+const ChoicesList = (props:{ choicesList:any[], setChoicesList:(a:any)=>any}) => {
+    const choicesList = props.choicesList;
+    const setChoicesList = props.setChoicesList;
+    const list: JSX.Element[] = [];
+    for (let i = 0; i < choicesList.length; i++) {
+        list.push(
+            <div style={{ display: "flex" }}>
+                <Checkbox style={{ flexGrow: 15 }} checked={choicesList[i].collect_flag}
+                    onChange={(event) => {
+                        const t = choicesList.slice();
+                        t[i].collect_flag = event.target.checked;
+                        setChoicesList(t);
+                    }} />
+                <TextField name={`choicesText_${i}`} style={{ flexGrow: 84, marginBottom: "15px" }} label={`選択肢${i + 1}`}
+                    variant="outlined" value={choicesList[i].choice_text} onChange={
+                        (event) => {
+                            const t = choicesList.slice();
+                            t[i].choice_text = event.target.value;
+                            setChoicesList(t);
+                        }} />
+                <IconButton style={{ flexGrow: 1, marginBottom: "15px" }} onClick={
+                    () => {
+                        let tlist = choicesList.slice();
+                        tlist.splice(i, 1);
+                        setChoicesList(tlist);
+                    }
+                }>
+                    <DeleteForeverIcon />
+                </IconButton>
+            </div>
+        );
+    }
+    return (<>{list}</>);
+}
+
+
 const Edit = (props: IProps) => {
     const [choicesList, setChoicesList]
         = useState(props.choices);
@@ -72,39 +108,6 @@ const Edit = (props: IProps) => {
         = useState(props.problem.answer_type);
     const [problemBody, setProblemBody]
         = useState(props.problem.problem_body);
-
-    const ChoicesList = () => {
-        const list: JSX.Element[] = [];
-        for (let i = 0; i < choicesList.length; i++) {
-            list.push(
-                <div style={{ display: "flex" }}>
-                    <Checkbox style={{ flexGrow: 15 }} checked={choicesList[i].collect_flag} 
-                    onChange={ (event) => {
-                        const t = choicesList.slice();
-                        t[i].collect_flag = event.target.checked;
-                        setChoicesList(t);
-                        }} />
-                    <TextField name={`choicesText_${i}`} style={{ flexGrow: 84, marginBottom: "15px" }} label={`選択肢${i + 1}`} 
-                    variant="outlined" value={choicesList[i].choice_text} onChange={
-                        (event) => {
-                            const t = choicesList.slice();
-                            t[i].choice_text = event.target.value;
-                            setChoicesList(t);
-                            }}/>
-                    <IconButton style={{ flexGrow: 1, marginBottom: "15px" }} onClick={
-                        () => {
-                            let tlist = choicesList.slice();
-                            tlist.splice(i, 1);
-                            setChoicesList( tlist );
-                        }
-                    }>
-                        <DeleteForeverIcon />
-                    </IconButton>
-                </div>
-            );
-        }
-        return (<>{list}</>);
-    }
 
     return (
         <ManagementCommon
@@ -138,8 +141,8 @@ const Edit = (props: IProps) => {
                 <Typography variant="body1">問題にはテキストか画像を使用できます。</Typography>
                 <div style={{ margin: "15px" }}></div>
                 <FormControl>
-                    <Select name="problemType" variant="outlined" value={problemType} 
-                    onChange={event => setProblemType(event.target.value as number)}>
+                    <Select name="problemType" variant="outlined" value={problemType}
+                        onChange={event => setProblemType(event.target.value as number)}>
                         <MenuItem value={0} selected>テキスト</MenuItem>
                         <MenuItem value={1} >画像</MenuItem>
                     </Select>
@@ -161,8 +164,8 @@ const Edit = (props: IProps) => {
                 <Typography variant="body1">回答方法には選択式とテキスト入力が使えます。</Typography>
                 <div style={{ margin: "15px" }}></div>
                 <FormControl variant="outlined">
-                    <Select name="choiceType" value={choiceType} 
-                    onChange={event => setChoiceType(event.target.value as number)}>
+                    <Select name="choiceType" value={choiceType}
+                        onChange={event => setChoiceType(event.target.value as number)}>
                         <MenuItem value={0}>選択式</MenuItem>
                         <MenuItem value={1}>テキスト</MenuItem>
                     </Select>
@@ -178,7 +181,7 @@ const Edit = (props: IProps) => {
                             <Typography variant="body1" style={{ flexGrow: 1, textAlign: "center" }}>削除</Typography>
                         </div>
                         <List>
-                            <ChoicesList />
+                            <ChoicesList choicesList={choicesList} setChoicesList={setChoicesList} />
                         </List>
                         <Button variant="contained" color="primary" onClick={() => {
                             const tlist = choicesList.slice();
@@ -199,7 +202,7 @@ const Edit = (props: IProps) => {
                     variant="contained"
                     color="secondary"
                     type="submit"
-                    >問題追加</Button>
+                >問題追加</Button>
             </form>
         </ManagementCommon>
     )
