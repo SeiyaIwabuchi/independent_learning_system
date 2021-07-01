@@ -33,6 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         } else if (req.method == "PUT") {
             const problem: problem = JSON.parse(req.body);
             isValid = await AjvValidater(problemFormJson.definitions.problem_PUT, problem);
+            res.json({error: "validate error!"});
         } else if (req.method == "DELETE") {
             const problemList: string[] = JSON.parse(req.body);
             isValid = await AjvValidater(problemFormJson.definitions.problem_DELETE, problemList);
