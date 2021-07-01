@@ -50,7 +50,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     where: {
                         hash: problem.subjectHash!
                     }
-                }).then(e => subject_id = e!.id);
+                }).then(e => subject_id = e!.id)
+                .catch(err => res.json({"error" : `${err}`}));
                 let problemRec: t_problems;
                 await db.t_problems.create({
                     id: null,
@@ -59,7 +60,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     problem_type: problem.problem_type!,
                     answer_type: problem.answer_type!,
                     problem_body: problem.problem_body
-                }).then(r => problemRec = r);
+                }).then(r => problemRec = r)
+                .catch(err => res.json({"error" : `${err}`}));
                 await db.t_choices.bulkCreate(
                     problem.choices.map(e => {
                         return {
@@ -70,7 +72,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                             image_id: e.image_id
                         }
                     })
-                );
+                ).catch(err => res.json({"error" : `${err}`}));
             } else if (req.method == "PUT") {
                 // update t_problem
                 let problemId: number;

@@ -95,7 +95,16 @@ const Edit = (props: IProps) => {
                             problem_body: problemBody,
                             choices: choicesList
                         })
-                    }).catch(err => {
+                    })
+                    .then(res => {
+                        if(res.status == 500){
+                            res.json().then(resJson => {
+                                console.log(resJson);
+                                alert(resJson);
+                            })
+                        }
+                    })
+                    .catch(err => {
                         console.log(err);
                         alert(err);
                     });
