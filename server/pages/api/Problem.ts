@@ -27,16 +27,20 @@ type problem = {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.setHeader("Content-Type","application/json");
     if (await SessionIdValidater(undefined, req.cookies.sessionId) != `Unauthorised`) {
-        let validate:ajv.ValidateFunction;
+        let validate: any;
         let isValid = false;
         if (req.method == "POST") {
             const problem: problem = JSON.parse(req.body);
             validate = new ajv().compile(problemFormJson.definitions.problem_POST);
             isValid = await validate(problem);
+            isValid &&= problem.problem_body!.length > 3;
+            problem.choices.forEach(e => {isValid &&= e.choice_text.length > 0});
         } else if (req.method == "PUT") {
             const problem: problem = JSON.parse(req.body);
             validate = new ajv().compile(problemFormJson.definitions.problem_PUT);
             isValid = await validate(problem);
+            isValid &&= problem.problem_body!.length > 3;
+            problem.choices.forEach(e => {isValid &&= e.choice_text.length > 0});
         } else if (req.method == "DELETE") {
             const problemList: string[] = JSON.parse(req.body);
             isValid = await AjvValidater(problemFormJson.definitions.problem_DELETE, problemList);
@@ -86,6 +90,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     res.status(500).json({"error" : err});
                     return;
                 });
+                res.status(200).json({message: "ok"});
             } else if (req.method == "PUT") {
                 // update t_problem
                 let problemId: number;
@@ -128,6 +133,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         problem_id: problemId!
                     }
                 });
+                res.status(200).json({message: "ok"});
             } else if (req.method == "DELETE") {
                 const problemList: string[] = JSON.parse(req.body);
                 await db.t_problems.destroy({
@@ -136,7 +142,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                             [Op.in]: problemList
                         }
                     }
-                })
+                });
+                res.status(200).json({message: "ok"});
             }
         }else{
             res.status(400).json({error: validate!.errors});
