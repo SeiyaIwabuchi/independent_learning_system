@@ -97,7 +97,7 @@ const Edit = (props: IProps) => {
                         })
                     })
                     .then(res => {
-                        if(res.status == 500){
+                        if(res.status >= 400){
                             res.json().then(resJson => {
                                 console.log(resJson);
                                 alert(resJson);
