@@ -12,56 +12,14 @@ import { FormControl } from "@material-ui/core";
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const problemHash: string = context.query.problemHash as string;
-    let problem: any;
-    let choices: { id: number }[] = [];
-    await db.t_problems.findOne({
-        where: {
-            hash: problemHash
-        },
-        raw: true,
-    }).then(e => problem = JSON.parse(JSON.stringify(e)));
-    await db.t_choices.findAll({
-        where: {
-            problem_id: problem.id
-        },
-    }).then(e => {
-        choices = []
-        let choicesObj: { [key: number]: any } = {};
-        for (let a of e) {
-            choicesObj[a.id] = a;
-        }
-        let choices_a: number[] = [];
-        for (let n of e) choices_a.push(n.id);
-        choices_a.sort((a, b) => a > b ? 1 : -1);
-        choices = [];
-        for (let t of choices_a) choices.push(choicesObj[t]);
-        choices = JSON.parse(JSON.stringify(choices))
-    });
+    const subjectHash: string = context.query.subjectHash as string;
     return {
         props: {
             sessionId: await SessionIdValidater(context),
-            problem: problem,
-            choices: choices
+            subjectHash: subjectHash
         }
     }
 };
-
-interface IProps {
-    sessionId: string,
-    problem: {
-        id: number,
-        hash: string,
-        problem_type: number,
-        answer_type: number,
-        problem_body: string
-    },
-    choices: {
-        id: number,
-        choice_text: string,
-        collect_flag: boolean
-    }[]
-}
 
 const ChoicesList = (props:{ choicesList:any[], setChoicesList:(a:any)=>any}) => {
     const choicesList = props.choicesList;
@@ -98,20 +56,28 @@ const ChoicesList = (props:{ choicesList:any[], setChoicesList:(a:any)=>any}) =>
     return (<>{list}</>);
 }
 
+interface IProps {
+    sessionId: string,
+    subjectHash: string;
+}
 
 const Edit = (props: IProps) => {
     const [choicesList, setChoicesList]
-        = useState(props.choices);
+        = useState<{
+            id: number;
+            choice_text: string;
+            collect_flag: boolean;
+        }[]>([]);
     const [problemType, setProblemType]
-        = useState(props.problem.problem_type);
+        = useState(0);
     const [choiceType, setChoiceType]
-        = useState(props.problem.answer_type);
+        = useState(0);
     const [problemBody, setProblemBody]
-        = useState(props.problem.problem_body);
+        = useState("");
 
     return (
         <ManagementCommon
-            pageTitle="問題編集"
+            pageTitle="問題作成"
             pageLayoutType={LAYOUT_TYPE.EDIT}
             sessionId={props.sessionId}
             onRightButtonClicked={() => { }}>
@@ -121,7 +87,7 @@ const Edit = (props: IProps) => {
                     await fetch("/api/Problem", {
                         method: "PUT",
                         body: JSON.stringify({
-                            hash: props.problem.hash,
+                            hash: null,
                             problem_type: problemType,
                             answer_type: choiceType,
                             problem_body: problemBody,
