@@ -9,6 +9,7 @@ import { useState } from "react";
 import { ProblemForm } from "../../../form_schemas/ts/ProblemForm";
 import db, { t_problems } from "../../../models";
 import { FormControl } from "@material-ui/core";
+import router from "next/router";
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -85,8 +86,9 @@ const Edit = (props: IProps) => {
                 onSubmit={async (e) => {
                     e.preventDefault();
                     await fetch("/api/Problem", {
-                        method: "PUT",
+                        method: "POST",
                         body: JSON.stringify({
+                            subjectHash: props.subjectHash,
                             hash: null,
                             problem_type: problemType,
                             answer_type: choiceType,
@@ -97,6 +99,7 @@ const Edit = (props: IProps) => {
                         console.log(err);
                         alert(err);
                     });
+                    router.push(`/Manage/Problem/List?subjectHash=${props.subjectHash}`);
                 }}
                 style={{
                     display: "flex",

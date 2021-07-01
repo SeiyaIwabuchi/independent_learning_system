@@ -70,10 +70,10 @@ const List = (props: ISessionId & { problems: ProblemForm[], subjects: SubjectFo
                 pageTitle="問題管理"
                 pageLayoutType={LAYOUT_TYPE.MENU}
                 sessionId={props.sessionId}
-                AddUrl="/Manage/Problem/Add?subjectHash=`${selectedSubject}`"
+                AddUrl={`/Manage/Problem/Add?subjectHash=${props.selectedSubject}`}
                 MenuList={[
                     <MenuItem onClick={() => {
-                        router.push(`/Manage/Problem/Delete?list=${JSON.stringify(deleteList[0])}`);
+                        router.push(`/Manage/Problem/Delete?list=${JSON.stringify(deleteList[0])}&subjectHash=${props.selectedSubject}`);
                     }} key={"DeleteSelectedItem"}>
                         <ListItemText primary="選択問題削除"></ListItemText>
                     </MenuItem>

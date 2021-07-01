@@ -60,15 +60,13 @@ const Delete = (props: ISessionId & { problemList: { "hash": string, "problem_bo
                             "/api/Problem",
                             {
                                 method : "delete",
-                                body : JSON.stringify(props.problemList)
+                                body : JSON.stringify(props.problemList.map(e => e.hash))
                             }
-                        ).then(() => {
-                            router.push("/Manage/Problem/List");
-                        }).catch((err) => {
+                        ).catch((err) => {
                             alert(err);
                             console.log(err);
-                            router.push("/Manage/Problem/List");
                         });
+                        router.push(`/Manage/Problem/List?subjectHash=${router.query.subjectHash!}`);
                     }}>
                     {"削除"}
                 </Button>

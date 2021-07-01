@@ -22,7 +22,7 @@ const ProblemMenuListElemet = (props : IElemetPorps) => {
             <ListItem 
                 button={true} 
                 component="a" 
-                href={`/Manage/Problem/Edit?problemHash=${props.problem.hash}`}
+                href={`/Manage/Problem/Edit?problemHash=${props.problem.hash}&subjectHash=${props.subject.hash}`}
                 key={props.problem.hash}
             >
                 <ListItemText
