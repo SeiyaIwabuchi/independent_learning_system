@@ -91,7 +91,6 @@
                         "required": [
                             "choice_text",
                             "collect_flag",
-                            "image_id"
                         ]
                     },
                     "title": "choices"
@@ -164,7 +163,6 @@
                             "choice_text",
                             "collect_flag",
                             "id",
-                            "image_id",
                             "problem_id"
                         ]
                     },
