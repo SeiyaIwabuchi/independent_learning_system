@@ -90,7 +90,7 @@
                         },
                         "required": [
                             "choice_text",
-                            "collect_flag",
+                            "collect_flag"
                         ]
                     },
                     "title": "choices"
