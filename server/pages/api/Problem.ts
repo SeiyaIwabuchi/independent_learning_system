@@ -5,6 +5,8 @@ import { Op } from "sequelize";
 import crypto from "crypto";
 import AjvValidater from "../../utils/AjvValidater";
 import problemFormJson from "../../form_schemas/ProblemForm.json";
+import ajv from "ajv";
+
 
 type problem = {
     [key: string]: any;
@@ -25,22 +27,19 @@ type problem = {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.setHeader("Content-Type","application/json");
     if (await SessionIdValidater(undefined, req.cookies.sessionId) != `Unauthorised`) {
+        let validate:ajv.ValidateFunction;
         let isValid = false;
         if (req.method == "POST") {
             const problem: problem = JSON.parse(req.body);
-            isValid = await AjvValidater(problemFormJson.definitions.problem_POST, problem);
-            res.status(400).json({error: "validate error!"});
-            return;
+            validate = new ajv().compile(problemFormJson.definitions.problem_POST);
+            isValid = await validate(problem);
         } else if (req.method == "PUT") {
             const problem: problem = JSON.parse(req.body);
-            isValid = await AjvValidater(problemFormJson.definitions.problem_PUT, problem);
-            res.status(400).json({error: "validate error!"});
-            return;
+            validate = new ajv().compile(problemFormJson.definitions.problem_PUT);
+            isValid = await validate(problem);
         } else if (req.method == "DELETE") {
             const problemList: string[] = JSON.parse(req.body);
             isValid = await AjvValidater(problemFormJson.definitions.problem_DELETE, problemList);
-            res.status(400).json({error: "validate error!"});
-            return;
         }
 
         if (isValid) {
@@ -139,8 +138,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 })
             }
+        }else{
+            res.status(400).json({error: validate!.errors});
         }
-        res.json({ message: "dummy" });
     } else {
         res.json({ message: "Unauthorise" })
     }
