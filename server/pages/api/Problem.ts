@@ -23,21 +23,24 @@ type problem = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-
+    res.setHeader("Content-Type","application/json");
     if (await SessionIdValidater(undefined, req.cookies.sessionId) != `Unauthorised`) {
-
         let isValid = false;
         if (req.method == "POST") {
             const problem: problem = JSON.parse(req.body);
             isValid = await AjvValidater(problemFormJson.definitions.problem_POST, problem);
+            res.status(400).json({error: "validate error!"});
+            return;
         } else if (req.method == "PUT") {
             const problem: problem = JSON.parse(req.body);
             isValid = await AjvValidater(problemFormJson.definitions.problem_PUT, problem);
-            res.status(400);
-            res.json({error: "validate error!"});
+            res.status(400).json({error: "validate error!"});
+            return;
         } else if (req.method == "DELETE") {
             const problemList: string[] = JSON.parse(req.body);
             isValid = await AjvValidater(problemFormJson.definitions.problem_DELETE, problemList);
+            res.status(400).json({error: "validate error!"});
+            return;
         }
 
         if (isValid) {
@@ -54,8 +57,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 }).then(e => subject_id = e!.id)
                 .catch(err => {
-                    res.status(500);
-                    res.json({"error" : `${err}`})
+                    res.status(500).json({"error" : err});
+                    return;
                 });
                 let problemRec: t_problems;
                 await db.t_problems.create({
@@ -67,8 +70,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     problem_body: problem.problem_body
                 }).then(r => problemRec = r)
                 .catch(err => {
-                    res.status(500);
-                    res.json({"error" : `${err}`})
+                    res.status(500).json({"error" : err});
+                    return;
                 });
                 await db.t_choices.bulkCreate(
                     problem.choices.map(e => {
@@ -81,8 +84,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         }
                     })
                 ).catch(err => {
-                    res.status(500);
-                    res.json({"error" : `${err}`})
+                    res.status(500).json({"error" : err});
+                    return;
                 });
             } else if (req.method == "PUT") {
                 // update t_problem

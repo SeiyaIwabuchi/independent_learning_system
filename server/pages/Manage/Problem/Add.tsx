@@ -97,8 +97,10 @@ const Edit = (props: IProps) => {
                         })
                     })
                     .then(res => {
-                        if(res.status >= 400){
-                            res.json().then(resJson => {
+                        if(!res.ok){
+                            console.log(`status code: ${res.status}`);
+                            alert(`status code: ${res.status}`);
+                            res.text().then(resJson => {
                                 console.log(resJson);
                                 alert(resJson);
                             })
