@@ -108,9 +108,9 @@ const ManagementCommon = (props: IProps) => {
     const [timer, setTimer] = useState(3);
     const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
     const snackbar = {
-        state: snackbarState,
-        setState: setSnackbarState,
-        msg: snackbarMsg
+        state: props.snackBar?.state || snackbarState,
+        setState: props.snackBar?.setState || setSnackbarState,
+        msg:  props.snackBar?.msg || snackbarMsg
     }
     useEffect(() => {
         if (props.sessionId == "Unauthorised") {

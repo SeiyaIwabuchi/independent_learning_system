@@ -34,13 +34,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             const problem: problem = JSON.parse(req.body);
             validate = new ajv().compile(problemFormJson.definitions.problem_POST);
             isValid = await validate(problem);
-            isValid &&= problem.problem_body!.length > 3;
+            isValid &&= problem.problem_body!.length > 0;
             problem.choices.forEach(e => {isValid &&= e.choice_text.length > 0});
         } else if (req.method == "PUT") {
             const problem: problem = JSON.parse(req.body);
             validate = new ajv().compile(problemFormJson.definitions.problem_PUT);
             isValid = await validate(problem);
-            isValid &&= problem.problem_body!.length > 3;
+            isValid &&= problem.problem_body!.length > 0;
             problem.choices.forEach(e => {isValid &&= e.choice_text.length > 0});
         } else if (req.method == "DELETE") {
             const problemList: string[] = JSON.parse(req.body);
@@ -75,7 +75,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 }).then(r => problemRec = r)
                 .catch(err => {
                     res.status(500).json({"error" : err});
-                    return;
+                    throw err;
                 });
                 await db.t_choices.bulkCreate(
                     problem.choices.map(e => {
@@ -89,7 +89,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     })
                 ).catch(err => {
                     res.status(500).json({"error" : err});
-                    return;
+                    throw err;
                 });
                 res.status(200).json({message: "ok"});
             } else if (req.method == "PUT") {

@@ -6,8 +6,6 @@ import { Button, Checkbox, IconButton, List, ListItem, MenuItem, Select, TextFie
 import { Typography } from "@material-ui/core";
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { useState } from "react";
-import { ProblemForm } from "../../../form_schemas/ts/ProblemForm";
-import db, { t_problems } from "../../../models";
 import { FormControl } from "@material-ui/core";
 import router from "next/router";
 
@@ -22,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 };
 
-const ChoicesList = (props:{ choicesList:any[], setChoicesList:(a:any)=>any}) => {
+const ChoicesList = (props: { choicesList: any[], setChoicesList: (a: any) => any }) => {
     const choicesList = props.choicesList;
     const setChoicesList = props.setChoicesList;
     const list: JSX.Element[] = [];
@@ -75,42 +73,54 @@ const Edit = (props: IProps) => {
         = useState(0);
     const [problemBody, setProblemBody]
         = useState("");
-
+    const [snackBarState, setSnackBarState] = useState(false);
+    const [snackBarMsg, setSnackBarMsg] = useState("");
+    
     return (
         <ManagementCommon
             pageTitle="問題作成"
             pageLayoutType={LAYOUT_TYPE.EDIT}
             sessionId={props.sessionId}
-            onRightButtonClicked={() => { }}>
+            onRightButtonClicked={() => { }}
+            snackBar={{
+                setState: setSnackBarState,
+                state: snackBarState,
+                msg: snackBarMsg,
+            }}>
             <form
                 onSubmit={async (e) => {
                     e.preventDefault();
-                    await fetch("/api/Problem", {
-                        method: "POST",
-                        body: JSON.stringify({
-                            subjectHash: props.subjectHash,
-                            hash: null,
-                            problem_type: problemType,
-                            answer_type: choiceType,
-                            problem_body: problemBody,
-                            choices: choicesList
-                        })
-                    })
-                    .then(res => {
-                        if(!res.ok){
-                            console.log(`status code: ${res.status}`);
-                            alert(`status code: ${res.status}`);
-                            res.text().then(resJson => {
-                                console.log(resJson);
-                                alert(resJson);
+                    if (problemBody.length > 0) {  //validation
+                        await fetch("/api/Problem", {
+                            method: "POST",
+                            body: JSON.stringify({
+                                subjectHash: props.subjectHash,
+                                hash: null,
+                                problem_type: problemType,
+                                answer_type: choiceType,
+                                problem_body: problemBody,
+                                choices: choicesList
                             })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        alert(err);
-                    });
-                    router.push(`/Manage/Problem/List?subjectHash=${props.subjectHash}`);
+                        })
+                            .then(res => {
+                                if (!res.ok) {
+                                    console.log(`status code: ${res.status}`);
+                                    alert(`status code: ${res.status}`);
+                                    res.text().then(resJson => {
+                                        console.log(resJson);
+                                        alert(resJson);
+                                    })
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                alert(err);
+                            });
+                            router.push(`/Manage/Problem/List?subjectHash=${props.subjectHash}`);
+                    }else{
+                        setSnackBarMsg("問題文を入力してください。");
+                        setSnackBarState(true);
+                    }
                 }}
                 style={{
                     display: "flex",
