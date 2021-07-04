@@ -1,9 +1,23 @@
 import { Button, ListItem, ListItemSecondaryAction, ListItemText, Switch } from "@material-ui/core";
 import { List, Typography } from "@material-ui/core"
+import { GetServerSideProps } from "next";
+import router from "next/router";
 import React from "react";
+import { useEffect } from "react";
 import OuterFrame from "../../components/OuterFrame";
 
-const SubjectList = (props: {}) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    return {
+        props:{
+            query:Object.keys(context.query).map(e => `${e}=${context.query[e]}`).join("&")
+        }
+    }
+};
+
+const SubjectList = (props:{query:string}) => {
+    useEffect(() => {
+        console.log(router.query)
+    });
     return (
         <OuterFrame appbar={{ title: "オプション" }} snackbar={{}}>
             <div
@@ -36,7 +50,12 @@ const SubjectList = (props: {}) => {
                     </ListItemSecondaryAction>
                     </ListItem>
                 </List>
-                <Button variant="contained" color="primary">開始</Button>
+                <Button 
+                variant="contained" 
+                color="primary" 
+                href={
+                    `/Play/Review?${ props.query }`
+                }>開始</Button>
             </div>
         </OuterFrame>
     )
