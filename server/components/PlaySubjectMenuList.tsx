@@ -1,6 +1,7 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
 import React, { Dispatch, SetStateAction } from "react";
 import { SubjectForm } from "../form_schemas/ts/SubjectForm";
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 export interface IElemetPorps{
     subject:{
@@ -11,13 +12,12 @@ export interface IElemetPorps{
 }
 
 const SubjectMenuListElemet = (props : IElemetPorps) => {
-    let deleteList:any[] = [];
     return (
         <>
             <ListItem 
                 button={true} 
                 component="a" 
-                href={`/Play/Option?hash=${props.subject.hash}`}
+                href={`/Play/Option?subjectHash=${props.subject.hash}&order=0`}
                 key={props.subject.hash}
             >
                 <ListItemText
@@ -25,16 +25,7 @@ const SubjectMenuListElemet = (props : IElemetPorps) => {
                     secondary={props.subject.description!}
                 />
                 <ListItemSecondaryAction>
-                    <Checkbox onChange={
-                        (event) => {
-                            if(deleteList.indexOf(props.subject.hash) == -1)
-                                deleteList.push(props.subject.hash);
-                            else
-                                deleteList.splice( deleteList.indexOf(props.subject.hash), 1);
-                        }
-                    }
-                    checked={ deleteList.indexOf(props.subject.hash) != -1 }
-                    />
+                    <ChevronRightIcon />
                 </ListItemSecondaryAction>
             </ListItem>
         </>
