@@ -17,7 +17,7 @@ const SubjectMenuListElemet = (props : IElemetPorps) => {
             <ListItem 
                 button={true} 
                 component="a" 
-                href={`/Play/Option?subjectHash=${props.subject.hash}&order=0`}
+                href={`/Play/Option?subjectHash=${props.subject.hash}`}
                 key={props.subject.hash}
             >
                 <ListItemText

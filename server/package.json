@@ -16,6 +16,7 @@
     "@rjsf/core": "^2.5.1",
     "@rjsf/material-ui": "^2.5.1",
     "ajv": "^6.12.6",
+    "dexie": "^3.0.3",
     "final-form": "^4.20.2",
     "mui-rff": "^3.0.9",
     "mysql": "^2.18.1",
