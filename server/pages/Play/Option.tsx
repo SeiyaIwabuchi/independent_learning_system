@@ -30,6 +30,7 @@ const SubjectList = (props: { subjectHash: string }) => {
                 );
                 let nextProblem = "";
                 await dexieDb.problem_hash_order.get(0).then(e => nextProblem = e!.hash);
+                // TODO ここで今解いている問題の番号をDBに格納する。
                 router.push(`/Play/Review?problemHash=${nextProblem}`)
             });
     };

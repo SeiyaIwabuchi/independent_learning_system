@@ -1,10 +1,23 @@
 import { Button } from "@material-ui/core";
 import { Typography } from "@material-ui/core"
+import { GetServerSideProps } from "next";
 import router from "next/router";
 import React from "react";
 import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    // TODO 答え合わせの実装
+    // DBから回答した問題を取得する。
+    // ユーザが選択した選択肢を取得する。←どうやって？
+    // formで送信する？
+    const problemHash = context.query.problemHash as string;
+    return {
+        props:{
+
+        }
+    }
+}
 
 const Review = (props: {}) => {
     return (
