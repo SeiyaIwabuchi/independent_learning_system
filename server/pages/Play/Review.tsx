@@ -2,12 +2,14 @@ import { Button } from "@material-ui/core";
 import { Typography } from "@material-ui/core"
 import { GetServerSideProps } from "next";
 import router from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
 import db from "../../models";
+import { dexieDb } from "../../models/dexie";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    // TODO DONE サーバーサイドで問題答えを含めを付加する。 
     const problemHash = context.query.problemHash as string;
     let props: { subject: any, problem: any, choices: any[] }
         = { subject: {}, problem: {}, choices: [] };
@@ -71,7 +73,14 @@ const Review = (props: {
         image_id: number
     }[]
 }) => {
-    console.log(props);
+    useEffect(() => {
+        // TODO クライアントDBに受け取った問題を保存する。
+        const storeProblem = Object.assign({choices:props.choices},props.problem);
+        dexieDb.problem.clear().
+        then(() => {
+            dexieDb.problem.add(storeProblem,storeProblem.id);
+        });
+    });
     return (
         <ReviewCommon appbar={{ title: "復習" }} snackBar={{}}>
             <div>
@@ -93,6 +102,11 @@ const Review = (props: {
                         }}>
                         <Typography variant="body1">{props.problem.problem_body}</Typography>
                     </div>
+                    {
+                        /* TODO 問題の選択肢を選び、回答ボタンを押せるようにする。*/
+                        // TODO クライアントDBに選択した選択肢を保存する。
+                        // TODO 答え合わせページに遷移する。
+                    }
                     {(() =>
                         props.choices.map(c => (
                             <Button
