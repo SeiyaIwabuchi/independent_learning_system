@@ -124,7 +124,7 @@ const Review = (props: {
                         // TODO DONE クライアントDBに選択した選択肢を保存する。
                         // TODO DONE 答え合わせページに遷移する。
                     }
-                    <form>
+                    <form style={{marginBottom:"20px"}}>
                         <FormControl component="fieldset" >
                             <FormLabel component="legend">選択肢</FormLabel>
                             <FormGroup>

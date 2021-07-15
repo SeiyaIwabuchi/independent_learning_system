@@ -2,20 +2,20 @@
 // ↑はdexieの分かりやすい使い方
 import Dexie, { IndexableType, Table } from "dexie";
 
-interface IProblem_hash_order{
+export interface IProblem_hash_order{
     id:number,
     hash:string
 }
 type problem_hash_order = Table<IProblem_hash_order,number>;
 
-interface IChoices{
+export interface IChoices{
     id: string,
     problem_id: number,
     choice_text: string,
     collect_flag: boolean,
     image_id: number
 }
-interface IProblem{
+export interface IProblem{
     id: number;
     hash : string;
     subject_id : number;
@@ -26,7 +26,7 @@ interface IProblem{
 }
 type problem = Table<IProblem,number>;
 
-interface IChecked{
+export interface IChecked{
     id: number,
     checked : {[key:string]: boolean}
 }
