@@ -26,9 +26,16 @@ interface IProblem{
 }
 type problem = Table<IProblem,number>;
 
+interface IChecked{
+    id: number,
+    checked : {[key:string]: boolean}
+}
+type checked = Table<IChecked,number>
+
 interface DBModel{
     problem_hash_order: problem_hash_order
     problem: problem
+    checked: checked
 }
 
 export const dexieDb = new Dexie("db") as Dexie & DBModel;
@@ -37,5 +44,6 @@ export const dexieDb = new Dexie("db") as Dexie & DBModel;
 // migrate
 dexieDb.version(1).stores({
     problem_hash_order: "id",
-    problem: "id"
+    problem: "id",
+    checked: "id",
 });

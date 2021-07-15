@@ -2,24 +2,21 @@ import { Button } from "@material-ui/core";
 import { Typography } from "@material-ui/core"
 import { GetServerSideProps } from "next";
 import router from "next/router";
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
+import { dexieDb } from "../../models/dexie";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    // TODO 答え合わせの実装
-    // DBから回答した問題を取得する。
-    // ユーザが選択した選択肢を取得する。←どうやって？
-    // formで送信する？
-    const problemHash = context.query.problemHash as string;
-    return {
-        props:{
-
-        }
-    }
-}
-
-const Review = (props: {}) => {
+const Review = () => {
+    const [problem, setProblem] = useState("");
+    // useEffectの第２引数には変数（ステートフック）を記述する。変数が更新されるとuseEffectに設定した関数が呼び出される。
+    useEffect(() => {
+        dexieDb.problem.toArray()
+        .then(array => {
+            setProblem(array[0].problem_body);
+        })
+    }, []);
     return (
         <ReviewCommon appbar={{ title: "答え合わせ" }} snackBar={{}}>
             <div>
@@ -39,7 +36,7 @@ const Review = (props: {}) => {
                             padding: "3px",
                             marginBottom: "20px"
                         }}>
-                        <Typography variant="body1">{"なぜ人間は生きているのか"}</Typography>
+                        <Typography variant="body1">{problem}</Typography>
                     </div>
                     <Typography variant="h5" align="center" color="secondary" style={{ marginBottom: "10px" }}>不正解</Typography>
                     <Typography variant="body1" align="center" style={{ marginBottom: "5px" }}>答え</Typography>

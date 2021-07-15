@@ -1,8 +1,8 @@
-import { Button } from "@material-ui/core";
+import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from "@material-ui/core";
 import { Typography } from "@material-ui/core"
 import { GetServerSideProps } from "next";
 import router from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
 import db from "../../models";
@@ -73,12 +73,29 @@ const Review = (props: {
         image_id: number
     }[]
 }) => {
+    const [checked, setChecked] = useState<{[key:string]:boolean}>({});
+    const getChecked = (key: string) => {
+        return checked[key] == true
+    };
+    const handleSend = async () => {
+        await dexieDb.checked.clear();
+        await dexieDb.checked.add({id:0,checked:checked});
+        router.push("/Play/Confirm");
+    };
+    const handleChenged = (c : any, event: any) => {
+        setChecked(
+            Object.assign( 
+                checked,
+                {[c.id]:event.target.checked }
+            ) 
+        ) 
+    };
     useEffect(() => {
-        // TODO クライアントDBに受け取った問題を保存する。
-        const storeProblem = Object.assign({choices:props.choices},props.problem);
-        dexieDb.problem.clear().
-        then(() => {
-            dexieDb.problem.add(storeProblem,storeProblem.id);
+        // TODO DONE クライアントDBに受け取った問題を保存する。既に存在するときは存在するデータをすべて削除する。
+        const storeProblem = Object.assign({ choices: props.choices }, props.problem);
+        dexieDb.problem.clear()
+        .then(() => {
+            dexieDb.problem.add(storeProblem, storeProblem.id);
         });
     });
     return (
@@ -103,22 +120,26 @@ const Review = (props: {
                         <Typography variant="body1">{props.problem.problem_body}</Typography>
                     </div>
                     {
-                        /* TODO 問題の選択肢を選び、回答ボタンを押せるようにする。*/
-                        // TODO クライアントDBに選択した選択肢を保存する。
-                        // TODO 答え合わせページに遷移する。
+                        /* TODO DONE 問題の選択肢を選び、回答ボタンを押せるようにする。*/
+                        // TODO DONE クライアントDBに選択した選択肢を保存する。
+                        // TODO DONE 答え合わせページに遷移する。
                     }
-                    {(() =>
-                        props.choices.map(c => (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                style={{ marginBottom: "20px" }}
-                                onClick={() => {
-                                    router.push("/Play/Confirm");
-                                }}
-                            >{c.choice_text}</Button>
-                        ))
-                    )()}
+                    <form>
+                        <FormControl component="fieldset" >
+                            <FormLabel component="legend">選択肢</FormLabel>
+                            <FormGroup>
+                                {
+                                    props.choices.map(c => (
+                                        <FormControlLabel
+                                            control={<Checkbox value={getChecked(c.id)} onChange={(event) => handleChenged(c,event)}/>}
+                                            label={c.choice_text}
+                                        />
+                                    ))
+                                }
+                            </FormGroup>
+                        </FormControl>
+                    </form>
+                    <Button type="submit" variant="contained" color="primary" onClick={handleSend}>送信</Button>
                 </div>
             </div>
         </ReviewCommon>
