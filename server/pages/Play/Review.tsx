@@ -16,9 +16,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     await db.t_problems.findOne({
         where: {
             hash: problemHash
-        }
+        },
+        include:[{
+            model: db.t_subjects,
+            required: true
+        }],
+        raw: true
     })
-        .then(r =>
+        .then((r:db.t_problems & {[key:string]:any} | null) =>
             props.problem = {
                 id: r!.id,
                 hash: r!.hash,
@@ -26,6 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 problem_type: r!.problem_type,
                 answer_type: r!.answer_type,
                 problem_body: r!.problem_body,
+                subject_name: r!["t_subject.name"]
             }
         );
     await db.t_choices.findAll({
@@ -51,12 +57,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const Review = (props: {
-    subject: {
-        id: number,
-        hash: string,
-        name: string,
-        description: string
-    },
     problem: {
         id: number,
         hash: string,
@@ -64,6 +64,7 @@ const Review = (props: {
         problem_type: number,
         answer_type: number,
         problem_body: string,
+        subject_name:string
     },
     choices: {
         id: string,
@@ -97,11 +98,11 @@ const Review = (props: {
         .then(() => {
             dexieDb.problem.add(storeProblem, storeProblem.id);
         });
-    });
+    },[]);
     return (
         <ReviewCommon appbar={{ title: "復習" }} snackBar={{}}>
             <div>
-                <Typography variant="body2">{props.subject.name}</Typography>
+                <Typography variant="body2">{props.problem.subject_name}</Typography>
                 <div
                     style={{
                         display: "flex",

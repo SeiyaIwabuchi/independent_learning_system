@@ -23,6 +23,7 @@ export interface IProblem{
     answer_type : number;
     problem_body : string;
     choices : IChoices[];
+    subject_name: string;
 }
 type problem = Table<IProblem,number>;
 

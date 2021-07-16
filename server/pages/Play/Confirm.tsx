@@ -13,13 +13,15 @@ const Review = () => {
     const [collectChoice, setCollectChoice] = useState<IChoices[]>([]);
     const [choiced, setChoiced] = useState<IChoices[]>([]);
     const [isMatch, setIsMatch] = useState<boolean>(false);
+    const [subjectName, setSubjectName] = useState("");
     // useEffectの第２引数には変数（ステートフック）を記述する。変数が更新されるとuseEffectに設定した関数が呼び出される。
     useEffect(() => {
-        // TODO クライアントDBに格納されている問題とユーザの回答を比較する。
-        // TODO 一致するか否かで表示を変更する。
+        // TODO DONE クライアントDBに格納されている問題とユーザの回答を比較する。
+        // TODO DONE 一致するか否かで表示を変更する。
         dexieDb.problem.toArray()
         .then(array => {
             setProblemBody(array[0].problem_body);
+            setSubjectName(array[0].subject_name)
             setCollectChoice(
                 array[0].choices.
                 filter(e => e.collect_flag)
@@ -27,16 +29,27 @@ const Review = () => {
             dexieDb.checked.toArray()
             .then(arrayChecked => {
                 setChoiced(array[0].choices.filter(e => arrayChecked[0].checked[e.id]));
-                // 正解のチェックリスト
-                array.map()
-                arrayChecked.length == array[0].choices.length //
+                const collect:{[key:number]:boolean} = {};
+                array[0].choices.forEach(
+                    e => collect[parseInt(e.id)] = e.collect_flag
+                );
+                let isCollectResult = true;
+                Object.keys(collect).map(
+                    e => 
+                        collect[parseInt(e)] == (arrayChecked[0].checked[e] == undefined ? false : arrayChecked[0].checked[e])
+                )
+                .forEach(e => {
+                    console.log(e);
+                    isCollectResult = isCollectResult && e;
+                });
+                setIsMatch(isCollectResult);
             });
         });
     }, []);
     return (
         <ReviewCommon appbar={{ title: "答え合わせ" }} snackBar={{}}>
             <div>
-                <Typography variant="body2">{"{教科名}"}</Typography>
+                <Typography variant="body2">{subjectName}</Typography>
                 <div
                     style={{
                         display: "flex",
@@ -54,7 +67,11 @@ const Review = () => {
                         }}>
                         <Typography variant="body1">{problemBody}</Typography>
                     </div>
-                    <Typography variant="h5" align="center" color="secondary" style={{ marginBottom: "10px" }}>不正解</Typography>
+                    <Typography variant="h5" align="center" color="secondary" style={{ marginBottom: "10px" }}>
+                        {
+                            isMatch?"正解":"不正解"
+                        }
+                    </Typography>
                     <FormControl component="fieldset" style={{ marginBottom: "20px" }}>
                             <FormLabel component="legend">答え</FormLabel>
                             <FormGroup>
