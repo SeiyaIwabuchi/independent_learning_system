@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState({
     typography: {
       fontFamily: [
-        'Kosugi',
+        'Kosugi Maru',
         '-apple-system',
         'BlinkMacSystemFont',
         '"Segoe UI"',
