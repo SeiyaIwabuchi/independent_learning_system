@@ -27,7 +27,7 @@ const DummyList = [
     },
 ];
 
-export default () => {
+const Check = () => {
     return (
         <>
             <OuterFrame appbar={{ title: "結果" }} snackbar={{}}>
@@ -68,3 +68,4 @@ export default () => {
         </>
     )
 };
+export default Check;

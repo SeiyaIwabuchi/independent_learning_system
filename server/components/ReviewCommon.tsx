@@ -31,9 +31,9 @@ const ReviewCommon = (
                 <div style={{ marginTop: "50px" }} />
                 <Divider />
                 {(() => [
-                    { name: "チェックリスト", url: "#", icon: (<CheckIcon />) },
-                    { name: "問題一覧", url: "#", icon: (<MenuIcon />) },
-                    { name: "教科一覧", url: "#", icon: (<MenuIcon />) },
+                    { name: "チェックリスト", url: "/Play/Check", icon: (<CheckIcon />) },
+                    { name: "問題一覧", url: "/Play/ProblemList", icon: (<MenuIcon />) },
+                    { name: "教科一覧", url: "/Play/SubjectList", icon: (<MenuIcon />) },
                     { name: "データ初期化", url: "/Play/initData", icon: (<MenuIcon />) }
                 ].map(e => (
                     <ListItem button key={e.name} onClick={() => { router.push(e.url); }}>
