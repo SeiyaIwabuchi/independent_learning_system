@@ -1,5 +1,5 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ProblemForm } from "../form_schemas/ts/ProblemForm";
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
@@ -11,6 +11,10 @@ export interface IElemetPorps {
 
 const ReviewResultListElemet = (props: IElemetPorps) => {
     const [checked, setChecked] = useState(false);
+    useEffect(() => {
+        dexieDb.MarkList.get(props.resultProblem.hash)
+        .then(e => setChecked(e != undefined) );
+    });
     return (
         <>
             <ListItem
