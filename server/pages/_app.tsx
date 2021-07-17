@@ -22,7 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       ].join(','),
     },
     palette: {
-      type: 'light',
+      type: 'dark',
     },
   });
   useEffect(() => {
@@ -38,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           th.palette = { type: array[0].themeType };
           setTheme(th);
         }else{
-          dexieDb.Theme.add({themeType:"light"});
+          dexieDb.Theme.add({themeType:"dark"});
         }
       });
   }, []);
