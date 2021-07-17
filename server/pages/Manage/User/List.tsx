@@ -9,46 +9,63 @@ import db from "../../../models";
 import { UserForm } from "../../../form_schemas/ts/UserForm";
 import UserMenuList from "../../../components/UserMenuList";
 import { ListItemText } from "@material-ui/core";
+import t_sessions from "../../../database_schemas/t_sessions";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    let users : UserForm[] = [];
+    const sessionId = await SessionIdValidater(context);
+    let users: UserForm[] = [];
+    let currentUserName = "";
+    await db.t_sessions.findOne({
+        where: {
+            id: sessionId
+        },
+        include: [{
+            model: db.t_users,
+            required: true
+        }],
+        raw: true
+    })
+        .then((e: t_sessions & { [key: string]: any } | null) => {
+            currentUserName = e!["t_user.name"];
+        });
     await db.t_users.findAll()
-    .then((users_) => {
-        for(let r of users_){
-            users.push(
-                {
-                    id : r.id,
-                    name : r.name,
-                }
-            );
-        }
-    });
+        .then((users_) => {
+            for (let r of users_) {
+                users.push(
+                    {
+                        id: r.id,
+                        name: r.name,
+                    }
+                );
+            }
+        });
     return {
         props: {
-            sessionId: await SessionIdValidater(context),
-            users : users
+            sessionId: sessionId,
+            users: users,
+            currentUserName: currentUserName
         }
     }
 };
 
-const List = (props: ISessionId & {users : UserForm[]}) => {
-    
+const List = (props: ISessionId & { users: UserForm[], currentUserName:string }) => {
+
     const deleteList = useState<number[]>([]);
 
     return (
         <>
-            <ManagementCommon 
-            pageTitle="管理ユーザの管理" 
-            pageLayoutType={LAYOUT_TYPE.MENU}
-            sessionId={props.sessionId}
-            AddUrl="/Manage/User/Add"
-            MenuList={[
-                <MenuItem onClick={() => {
-                    router.push(`/Manage/User/Delete?list=${JSON.stringify(deleteList[0])}`);
-                }} key={"DeleteSelectedItem"}>
-                    <ListItemText primary="選択ユーザ削除"></ListItemText>
-                </MenuItem>
-            ]}
+            <ManagementCommon
+                pageTitle="管理ユーザの管理"
+                pageLayoutType={LAYOUT_TYPE.MENU}
+                sessionId={props.sessionId}
+                AddUrl="/Manage/User/Add"
+                MenuList={[
+                    <MenuItem onClick={() => {
+                        router.push(`/Manage/User/Delete?list=${JSON.stringify(deleteList[0])}`);
+                    }} key={"DeleteSelectedItem"}>
+                        <ListItemText primary="選択ユーザ削除"></ListItemText>
+                    </MenuItem>
+                ]}
             >
                 <div
                     style={{
@@ -70,7 +87,11 @@ const List = (props: ISessionId & {users : UserForm[]}) => {
                         justifyContent: "space-between",
                         padding: "10px"
                     }}>
-                    <UserMenuList menuList={props.users} deleteList={deleteList}/>
+                    <UserMenuList
+                    menuList={props.users} 
+                    deleteList={deleteList} 
+                    currentUserName={props.currentUserName}
+                    />
                 </div>
             </ManagementCommon>
         </>

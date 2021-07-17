@@ -2,23 +2,24 @@ import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbo
 import React, { Dispatch, SetStateAction } from "react";
 import { UserForm } from "../form_schemas/ts/UserForm";
 
-export interface IElemetPorps{
-    user:{
-        id : number,
-        name : string,
+export interface IElemetPorps {
+    user: {
+        id: number,
+        name: string,
     },
-    deleteList : [
-        number[], 
+    deleteList: [
+        number[],
         Dispatch<SetStateAction<number[]>>
-       ]
+    ],
+    currentUserName: string
 }
 
-const UserMenuListElemet = (props : IElemetPorps) => {
+const UserMenuListElemet = (props: IElemetPorps) => {
     return (
         <>
-            <ListItem 
-                button={true} 
-                component="a" 
+            <ListItem
+                button={true}
+                component="a"
                 href={`/Manage/User/Edit?&id=${props.user.id}`}
                 key={props.user.id}
             >
@@ -26,18 +27,23 @@ const UserMenuListElemet = (props : IElemetPorps) => {
                     primary={props.user.name}
                 />
                 <ListItemSecondaryAction>
-                    <Checkbox onChange={
-                        (event) => {
-                            let deleteList = props.deleteList[0].slice();
-                            if(deleteList.indexOf(props.user.id) == -1)
-                                deleteList.push(props.user.id);
-                            else
-                                deleteList.splice( deleteList.indexOf(props.user.id), 1);
-                            props.deleteList[1](deleteList);
+                    {
+                        props.user.name != props.currentUserName ?
+                        <Checkbox onChange={
+                            (event) => {
+                                let deleteList = props.deleteList[0].slice();
+                                if (deleteList.indexOf(props.user.id) == -1)
+                                    deleteList.push(props.user.id);
+                                else
+                                    deleteList.splice(deleteList.indexOf(props.user.id), 1);
+                                props.deleteList[1](deleteList);
+                            }
                         }
+                            checked={props.deleteList[0].indexOf(props.user.id) != -1}
+                        />
+                        :
+                        <></>
                     }
-                    checked={ props.deleteList[0].indexOf(props.user.id) != -1 }
-                    />
                 </ListItemSecondaryAction>
             </ListItem>
         </>
@@ -45,20 +51,25 @@ const UserMenuListElemet = (props : IElemetPorps) => {
 };
 
 const UserMenuList = (
-    props : {
-        menuList : UserForm[],
-        deleteList:[
-            number[], 
+    props: {
+        menuList: UserForm[],
+        deleteList: [
+            number[],
             Dispatch<SetStateAction<number[]>>
-        ]
+        ],
+        currentUserName: string
     }) => {
-    const menu : JSX.Element[] = [];
-    for(let i=0;i<props.menuList.length;i++){
+    const menu: JSX.Element[] = [];
+    for (let i = 0; i < props.menuList.length; i++) {
         let prop = props.menuList[i];
         menu.push(
-            <UserMenuListElemet user={prop} deleteList={props.deleteList}/>
+            <UserMenuListElemet 
+            user={prop} 
+            deleteList={props.deleteList} 
+            currentUserName={props.currentUserName}
+            />
         );
-        if(i < props.menuList.length -1)
+        if (i < props.menuList.length - 1)
             menu.push(<Divider />);
     }
     return (
