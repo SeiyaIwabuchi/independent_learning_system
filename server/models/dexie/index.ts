@@ -43,7 +43,14 @@ export interface IAnswerList{
     problemBody: string,
     isCollect: boolean
 }
-type answerList = Table<IAnswerList,number>
+type answerList = Table<IAnswerList,string>
+
+export interface IMarkList{
+    hash: string,
+    problemBody: string,
+    isCollect: boolean
+}
+type MarkList = Table<IMarkList,string>
 
 interface DBModel{
     problem_hash_order: problem_hash_order
@@ -51,6 +58,7 @@ interface DBModel{
     checked: checked
     currentProblem: currentProblem
     answerList: answerList
+    MarkList: MarkList
 }
 
 export const dexieDb = new Dexie("db") as Dexie & DBModel;
@@ -62,5 +70,6 @@ dexieDb.version(1).stores({
     problem: "id",
     checked: "id",
     currentProblem: "id",
-    answerList: "hash"
+    answerList: "hash",
+    MarkList: "hash",
 });

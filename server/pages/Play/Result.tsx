@@ -5,29 +5,10 @@ import ReviewCommon from "../../components/ReviewCommon";
 import ReviewResultList from "../../components/ReviewResultList";
 import { dexieDb, IAnswerList } from "../../models/dexie";
 
-const DummyResultList = [
-    {
-        problem: "問題１",
-        isCollect: true
-    },
-    {
-        problem: "問題２",
-        isCollect: false
-    },
-    {
-        problem: "問題３",
-        isCollect: true
-    },
-    {
-        problem: "問題４",
-        isCollect: false
-    },
-];
-
 const List = () => {
     const [subjectName, setSubjectName] = useState("");
     const [problemList,setProblemList] = 
-        useState<{problem:string,isCollect:boolean}[]>([]);
+        useState<{problemBody:string,isCollect:boolean,hash:string}[]>([]);
     const [statistics, setStatistics] = useState({
         number: 0,
         numOfCollect: 0,
@@ -41,7 +22,7 @@ const List = () => {
         .then(e => {
             setProblemList(
                 e.reverse().map(ee => {
-                    return {problem:ee.problemBody,isCollect:ee.isCollect} 
+                    return {problemBody:ee.problemBody,isCollect:ee.isCollect,hash:ee.hash} 
                 })
             );
             const sta = Object.assign({},statistics);

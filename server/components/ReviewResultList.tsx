@@ -1,23 +1,25 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { ProblemForm } from "../form_schemas/ts/ProblemForm";
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
+import { dexieDb } from "../models/dexie";
 
 export interface IElemetPorps {
-    resultProblem: { problem: string, isCollect: boolean }
+    resultProblem: { problemBody: string, isCollect: boolean, hash: string }
 }
 
 const ReviewResultListElemet = (props: IElemetPorps) => {
+    const [checked, setChecked] = useState(false);
     return (
         <>
             <ListItem
-                key={props.resultProblem.problem}
+                key={props.resultProblem.problemBody}
             >
                 <ListItemText
-                    primary={props.resultProblem.problem}
+                    primary={props.resultProblem.problemBody}
                 />
-                <div style={{marginRight:"5px"}}>
+                <div style={{ marginRight: "5px" }}>
                     {
                         props.resultProblem.isCollect ?
                             <CheckIcon color="primary" /> :
@@ -25,7 +27,13 @@ const ReviewResultListElemet = (props: IElemetPorps) => {
                     }
                 </div>
                 <ListItemSecondaryAction>
-                    <Checkbox />
+                    <Checkbox onChange={async (event) => {
+                        setChecked(event.target.checked);
+                        if(event.target.checked)
+                            await dexieDb.MarkList.add(props.resultProblem);
+                        else
+                            await dexieDb.MarkList.delete(props.resultProblem.hash);
+                    }} checked={checked} />
                 </ListItemSecondaryAction>
             </ListItem>
         </>
@@ -34,7 +42,7 @@ const ReviewResultListElemet = (props: IElemetPorps) => {
 
 const ReviewResultList = (
     props: {
-        resultList: { problem: string, isCollect: boolean }[]
+        resultList: { problemBody: string, isCollect: boolean, hash: string }[]
     }) => {
     const resultList: JSX.Element[] = [];
     for (let i = 0; i < props.resultList.length; i++) {
