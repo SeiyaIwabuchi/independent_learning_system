@@ -52,6 +52,11 @@ export interface IMarkList{
 }
 type MarkList = Table<IMarkList,string>
 
+export interface ITheme{
+    themeType: string;
+}
+type Theme = Table<ITheme,string>
+
 interface DBModel{
     problem_hash_order: problem_hash_order
     problem: problem
@@ -59,6 +64,7 @@ interface DBModel{
     currentProblem: currentProblem
     answerList: answerList
     MarkList: MarkList
+    Theme: Theme
 }
 
 export const dexieDb = new Dexie("db") as Dexie & DBModel;
@@ -72,4 +78,5 @@ dexieDb.version(1).stores({
     currentProblem: "id",
     answerList: "hash",
     MarkList: "hash",
+    Theme: "themeType"
 });

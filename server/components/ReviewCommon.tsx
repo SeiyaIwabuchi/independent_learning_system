@@ -4,6 +4,7 @@ import OuterFrame from "./OuterFrame";
 import MenuIcon from '@material-ui/icons/Menu';
 import CheckIcon from '@material-ui/icons/Check';
 import router from "next/router";
+import Settings from "@material-ui/icons/Settings";
 
 const ReviewCommon = (
     props: {
@@ -31,10 +32,11 @@ const ReviewCommon = (
                 <div style={{ marginTop: "50px" }} />
                 <Divider />
                 {(() => [
-                    { name: "チェックリスト", url: "/Play/Check", icon: (<CheckIcon />) },
                     { name: "問題一覧", url: "/Play/ProblemList", icon: (<MenuIcon />) },
                     { name: "教科一覧", url: "/Play/SubjectList", icon: (<MenuIcon />) },
-                    { name: "データ初期化", url: "/Play/initData", icon: (<MenuIcon />) }
+                    { name: "チェックリスト", url: "/Play/Check", icon: (<CheckIcon />) },
+                    { name: "データ初期化", url: "/Play/initData", icon: (<Settings />) },
+                    { name: "テーマ切り替え", url: "/Play/toggleTheme", icon: (<Settings />) }
                 ].map(e => (
                     <ListItem button key={e.name} onClick={() => { router.push(e.url); }}>
                         <ListItemIcon>
