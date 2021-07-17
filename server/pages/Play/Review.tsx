@@ -9,7 +9,6 @@ import db from "../../models";
 import { dexieDb } from "../../models/dexie";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    // TODO DONE サーバーサイドで問題答えを含めを付加する。 
     const problemHash = context.query.problemHash as string;
     let props: { subject: any, problem: any, choices: any[] }
         = { subject: {}, problem: {}, choices: [] };
@@ -92,7 +91,6 @@ const Review = (props: {
         ) 
     };
     useEffect(() => {
-        // TODO DONE クライアントDBに受け取った問題を保存する。既に存在するときは存在するデータをすべて削除する。
         const storeProblem = Object.assign({ choices: props.choices }, props.problem);
         dexieDb.problem.clear()
         .then(() => {
@@ -120,11 +118,6 @@ const Review = (props: {
                         }}>
                         <Typography variant="body1">{props.problem.problem_body}</Typography>
                     </div>
-                    {
-                        /* TODO DONE 問題の選択肢を選び、回答ボタンを押せるようにする。*/
-                        // TODO DONE クライアントDBに選択した選択肢を保存する。
-                        // TODO DONE 答え合わせページに遷移する。
-                    }
                     <form style={{marginBottom:"20px"}}>
                         <FormControl component="fieldset" >
                             <FormLabel component="legend">選択肢</FormLabel>

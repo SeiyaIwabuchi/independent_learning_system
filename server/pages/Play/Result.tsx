@@ -1,16 +1,9 @@
 import { Button, Typography } from "@material-ui/core";
-import { GetServerSideProps } from "next";
 import router from "next/router";
-import React from "react";
-import OuterFrame from "../../components/OuterFrame";
+import React, { useEffect, useState } from "react";
 import ReviewCommon from "../../components/ReviewCommon";
 import ReviewResultList from "../../components/ReviewResultList";
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    return {
-        props: {}
-    }
-};
+import { dexieDb, IAnswerList } from "../../models/dexie";
 
 const DummyResultList = [
     {
@@ -32,6 +25,33 @@ const DummyResultList = [
 ];
 
 const List = () => {
+    const [subjectName, setSubjectName] = useState("");
+    const [problemList,setProblemList] = 
+        useState<{problem:string,isCollect:boolean}[]>([]);
+    const [statistics, setStatistics] = useState({
+        number: 0,
+        numOfCollect: 0,
+        rate: 0
+    });
+    useEffect(() => {
+        dexieDb.problem.toArray()
+        .then(e => setSubjectName(e[0].subject_name));
+
+        dexieDb.answerList.toArray()
+        .then(e => {
+            setProblemList(
+                e.reverse().map(ee => {
+                    return {problem:ee.problemBody,isCollect:ee.isCollect} 
+                })
+            );
+            const sta = Object.assign({},statistics);
+            sta.numOfCollect = e.filter(ee => ee.isCollect).length;
+            sta.number = e.length;
+            sta.rate = sta.numOfCollect / sta.number * 100;
+            setStatistics(sta);
+        });
+
+    },[]);
     return (
         <>
             <ReviewCommon appbar={{ title: "結果" }} snackBar={{}}>
@@ -45,9 +65,11 @@ const List = () => {
                             justifyContent: "space-around"
                         }}
                     >
-                        <Typography variant="h4" align="center">{"{教科名}"}</Typography>
-                        <Typography variant="subtitle1" align="center">N問中M問正解</Typography>
-                        <Typography variant="subtitle1" align="center">L%正解</Typography>
+                        <Typography variant="h4" align="center">{subjectName}</Typography>
+                        <Typography variant="subtitle1" align="center">
+                            {`${statistics.number}問中${statistics.numOfCollect}問正解`}
+                        </Typography>
+                        <Typography variant="subtitle1" align="center">{`${statistics.rate}%正解`}</Typography>
                     </div>
                     <div
                         style={{
@@ -56,7 +78,7 @@ const List = () => {
                             justifyContent: "space-between",
                             padding: "10px"
                         }}>
-                        <ReviewResultList resultList={DummyResultList} />
+                        <ReviewResultList resultList={problemList} />
                         <Button variant="contained" color="primary" onClick={() => router.push("/Play/SubjectList") }>教科一覧</Button>
                     </div>
                 </div>

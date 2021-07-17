@@ -21,7 +21,7 @@ const SubjectList = () => {
                 await dexieDb.problem_hash_order.get(0).then(e => nextProblem = e!.hash);
                 await dexieDb.currentProblem.clear();
                 await dexieDb.currentProblem.add({id:0});
-                // TODO ここで今解いている問題の番号をDBに格納する。
+                await dexieDb.answerList.clear();
                 router.push(`/Play/Review?problemHash=${nextProblem}`)
             });
     };

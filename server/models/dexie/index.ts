@@ -38,11 +38,19 @@ export interface ICurrentProblem{
 }
 type currentProblem = Table<ICurrentProblem,number>
 
+export interface IAnswerList{
+    hash: string,
+    problemBody: string,
+    isCollect: boolean
+}
+type answerList = Table<IAnswerList,number>
+
 interface DBModel{
     problem_hash_order: problem_hash_order
     problem: problem
     checked: checked
     currentProblem: currentProblem
+    answerList: answerList
 }
 
 export const dexieDb = new Dexie("db") as Dexie & DBModel;
@@ -53,5 +61,6 @@ dexieDb.version(1).stores({
     problem_hash_order: "id",
     problem: "id",
     checked: "id",
-    currentProblem: "id"
+    currentProblem: "id",
+    answerList: "hash"
 });

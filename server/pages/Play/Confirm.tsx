@@ -34,8 +34,6 @@ const Review = () => {
     };
     // useEffectの第２引数には変数（ステートフック）を記述する。変数が更新されるとuseEffectに設定した関数が呼び出される。
     useEffect(() => {
-        // TODO DONE クライアントDBに格納されている問題とユーザの回答を比較する。
-        // TODO DONE 一致するか否かで表示を変更する。
         dexieDb.problem.toArray()
         .then(array => {
             setProblemBody(array[0].problem_body);
@@ -59,6 +57,11 @@ const Review = () => {
                 .forEach(e => {
                     console.log(e);
                     isCollectResult = isCollectResult && e;
+                });
+                dexieDb.answerList.add({
+                    hash: array[0].hash,
+                    problemBody: array[0].problem_body,
+                    isCollect: isCollectResult,
                 });
                 setIsMatch(isCollectResult);
             });
