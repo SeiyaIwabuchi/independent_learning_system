@@ -1,26 +1,15 @@
 import { Button, ListItem, ListItemSecondaryAction, ListItemText, Switch } from "@material-ui/core";
 import { List, Typography } from "@material-ui/core"
-import Dexie from "dexie";
-import { GetServerSideProps } from "next";
 import router from "next/router";
 import React from "react";
+import { useState } from "react";
 import { useEffect } from "react";
-import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
 import { dexieDb } from "../../models/dexie";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const subjectHash = context.query.subjectHash as string;
-    return {
-        props: {
-            subjectHash: subjectHash
-        }
-    }
-};
-
-const SubjectList = (props: { subjectHash: string }) => {
+const SubjectList = () => {
     const handle = async () => {
-        await fetch(`/api/ProblemHashList?subjectHash=${props.subjectHash}`)
+        await fetch(`/api/ProblemHashList?subjectHash=${router.query.subjectHash as string}`)
             .then(res => res.json())
             .then(async (res: string[]) => {
                 let i = 0;
@@ -30,6 +19,8 @@ const SubjectList = (props: { subjectHash: string }) => {
                 );
                 let nextProblem = "";
                 await dexieDb.problem_hash_order.get(0).then(e => nextProblem = e!.hash);
+                await dexieDb.currentProblem.clear();
+                await dexieDb.currentProblem.add({id:0});
                 // TODO ここで今解いている問題の番号をDBに格納する。
                 router.push(`/Play/Review?problemHash=${nextProblem}`)
             });

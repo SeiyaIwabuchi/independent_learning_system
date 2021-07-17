@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
-import { dexieDb, IChoices } from "../../models/dexie";
+import { dexieDb, IChoices, IProblem_hash_order } from "../../models/dexie";
 
 const Review = () => {
     const [problemBody, setProblemBody] = useState("");
@@ -14,6 +14,24 @@ const Review = () => {
     const [choiced, setChoiced] = useState<IChoices[]>([]);
     const [isMatch, setIsMatch] = useState<boolean>(false);
     const [subjectName, setSubjectName] = useState("");
+    const handleClick = async () => {
+        let problemHashList:string[] = [];
+        let currentProblemId = -1;
+        await dexieDb.problem_hash_order.toArray()
+        .then(array => {
+            problemHashList = array.map(e => e.hash);
+        });
+        await dexieDb.currentProblem.toArray()
+        .then(e => currentProblemId = e[0].id);
+        if(problemHashList.length - 1 > currentProblemId){
+            await dexieDb.currentProblem.clear();
+            await dexieDb.currentProblem.add({id:++currentProblemId});
+            const nextProblemHash = problemHashList[currentProblemId];
+            router.push(`/Play/Review?problemHash=${nextProblemHash}`);
+        }else{
+            router.push(`/Play/Result`);
+        }
+    };
     // useEffectの第２引数には変数（ステートフック）を記述する。変数が更新されるとuseEffectに設定した関数が呼び出される。
     useEffect(() => {
         // TODO DONE クライアントDBに格納されている問題とユーザの回答を比較する。
@@ -98,7 +116,7 @@ const Review = () => {
                                 }
                             </FormGroup>
                         </FormControl>
-                    <Button variant="contained" color="primary" style={{ marginBottom: "20px" }} onClick={() => router.push("/Play/Result")}>{"次の問題"}</Button>
+                    <Button variant="contained" color="primary" style={{ marginBottom: "20px" }} onClick={handleClick}>{"次の問題"}</Button>
                 </div>
             </div>
         </ReviewCommon>

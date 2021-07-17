@@ -34,6 +34,7 @@ const ReviewCommon = (
                     { name: "チェックリスト", url: "#", icon: (<CheckIcon />) },
                     { name: "問題一覧", url: "#", icon: (<MenuIcon />) },
                     { name: "教科一覧", url: "#", icon: (<MenuIcon />) },
+                    { name: "データ初期化", url: "/Play/initData", icon: (<MenuIcon />) }
                 ].map(e => (
                     <ListItem button key={e.name} onClick={() => { router.push(e.url); }}>
                         <ListItemIcon>
