@@ -35,7 +35,7 @@ let LoginForm = (props : {preSessionId : string}) => {
         msg: snackbarMsg
     };
     useEffect( () => {
-        // localStorageにsessionIdがある状態でログインフォームアクセスしたとき、
+        // クッキーにsessionIdがある状態でログインフォームアクセスしたとき、
         //sessionIdが有効な時はそのまま管理トップに遷移する。
         if(props.preSessionId != "Unauthorised"){
             router.push(`/Manage/Top?sessionId=${props.preSessionId}`);

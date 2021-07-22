@@ -8,7 +8,7 @@
         "group": "build",
         "problemMatcher": [],
         "label": "npm: build - nextjs-blog",
-        "detail": "next build",
+        "detail": "next build"
       },
       {
         "type": "npm",
@@ -20,7 +20,15 @@
         "group": "build",
         "dependsOn": [
           "npm: build - nextjs-blog"
-        ],
+        ]
+      },
+      {
+        "type": "npm",
+        "script": "test",
+        "group": "test",
+        "problemMatcher": [],
+        "label": "npm: test",
+        "detail": "jest"
       }
     ]
     }

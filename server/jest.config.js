@@ -10,3 +10,8 @@ module.exports = {
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
   }
+  
+process.on('unhandledRejection', (reason, promise) => {
+  console.error(reason);
+  process.exit(1);
+});
