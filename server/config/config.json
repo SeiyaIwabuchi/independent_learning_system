@@ -7,13 +7,6 @@
     "port":3312,
     "dialect": "mysql"
   },
-  "school": {
-    "username": "root",
-    "password": "root",
-    "storage" : "./sqlitDatabase/ils.sqlite",
-    "host": "localhost",
-    "dialect": "sqlite"
-  },
   "test": {
     "username": "webappuser",
     "password": "cE%4U_*y",
