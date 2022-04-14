@@ -1,3 +1,2 @@
 #!/bin/bash
-npm install sqlite3;
-npm install;
+npm install sqlite3 --build-from-source --sqlite=/usr/local
