@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.DEV_ENV || 'school';
 const config = require(__dirname + '/../config/config.json')[env];
-
+console.log(`Database env : ${env}`);
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
