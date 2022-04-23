@@ -37,8 +37,18 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.addConstraint('t_choices', {
+      fields : ["problem_id"],
+      type: 'foreign key',
+      references: {
+        table: 't_problems',
+        field: 'id'
+      },
+      onDelete: 'cascade',
+      onUpdate: 'cascade'
+    });
     // ダミーデータの追加
-    queryInterface.bulkInsert('t_choices',[
+    await queryInterface.bulkInsert('t_choices',[
       {
         id : null,
         problem_id : 1,
