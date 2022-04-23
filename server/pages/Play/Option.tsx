@@ -10,9 +10,7 @@ import { dexieDb } from "../../models/dexie";
 import db, { t_subjects } from "../../models";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    console.log(context.query);
     const subjectHash = context.query.subjectHash;
-    console.log(subjectHash);
     const problemHashList = (await db.t_problems.findAll({
         attributes: ["hash"],
         where: {
@@ -23,9 +21,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }],
         order: ["id"]
     })).map(ee => ee.hash);
+    const subjectId = (await db.t_subjects.findOne({
+        attributes:["id"],
+        where:{
+            hash:subjectHash
+        }
+    }))!.id;
     return {
         props: {
-            problemHashList: problemHashList
+            problemHashList: problemHashList,
+            subjectId:subjectId
         }
     }
 };
@@ -36,31 +41,48 @@ function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-const SubjectList = (props: { problemHashList: string[] }) => {
+const SubjectList = (props: { problemHashList: string[], subjectId:number }) => {
     const [isShuffle, setIsShuffle] = useState(false);
+    const [isCanBeContinued, setIsCanBeContinued] = useState(false);
+    const [isContinue, setIsContinue] = useState(false);
     const handle = async () => {
-        let i = 0;
-        await dexieDb.problem_hash_order.clear();
-        const problemHashList = props.problemHashList.slice();
-        if (isShuffle) {
-            for (let i = problemHashList.length; i > 1; i--) {
-                let a = i - 1;
-                let b = getRandomInt(0, 0x7fffffff) % i;
-                let t = problemHashList[a];
-                problemHashList[a] = problemHashList[b];
-                problemHashList[b] = t;
+        let nextProblemNumber = 0;
+        if (!isContinue) {
+            let i = 0;
+            await dexieDb.problem_hash_order.clear();
+            const problemHashList = props.problemHashList.slice();
+            if (isShuffle) {
+                for (let i = problemHashList.length; i > 1; i--) {
+                    let a = i - 1;
+                    let b = getRandomInt(0, 0x7fffffff) % i;
+                    let t = problemHashList[a];
+                    problemHashList[a] = problemHashList[b];
+                    problemHashList[b] = t;
+                }
             }
+            await dexieDb.problem_hash_order.bulkAdd(
+                problemHashList.map(e => { return { id: i++, hash: e } })
+            );
+            await dexieDb.currentProblem.clear();
+            await dexieDb.currentProblem.add({ id: 0 });
+            await dexieDb.answerList.clear();
+        }else{
+            nextProblemNumber = (await dexieDb.currentProblem.toArray())[0]!.id;
         }
-        await dexieDb.problem_hash_order.bulkAdd(
-            problemHashList.map(e => { return { id: i++, hash: e } })
-        );
-        let nextProblem = "";
-        await dexieDb.problem_hash_order.get(0).then(e => nextProblem = e!.hash);
-        await dexieDb.currentProblem.clear();
-        await dexieDb.currentProblem.add({ id: 0 });
-        await dexieDb.answerList.clear();
-        router.push(`/Play/Review?problemHash=${nextProblem}`)
+        let nextProblemHash = "";
+        nextProblemHash = (await dexieDb.problem_hash_order.get(nextProblemNumber))!.hash;
+        router.push(`/Play/Review?problemHash=${nextProblemHash}`)
     };
+    useEffect(() => {
+        // problem_hash_orderとcurrentProblemとproblemがdexieDBにあるときかつ
+        // 教科がsubject_idが一致するときは
+        // 前回から継続できると判断する。
+        (async () => {
+            const count = (await dexieDb.problem_hash_order.count()) + (await dexieDb.currentProblem.count()) + (await dexieDb.problem.count());
+            const remain = ((await dexieDb.problem.toArray())[0] || {subject_id:-1}).subject_id;
+            setIsCanBeContinued(count > 0 && props.subjectId == remain);
+        })();
+    });
     return (
         <ReviewCommon appbar={{ title: "オプション" }} snackBar={{}}>
             <div>
@@ -90,9 +112,19 @@ const SubjectList = (props: { problemHashList: string[] }) => {
                                 primary={"問題の出題順をランダムにする。"}
                             />
                             <ListItemSecondaryAction>
-                                <Switch value={isShuffle} onChange={e => setIsShuffle(e.target.checked)} />
+                                <Switch checked={isShuffle} onChange={e => { setIsShuffle(e.target.checked); setIsContinue(!e.target.checked && isContinue) }} />
                             </ListItemSecondaryAction>
                         </ListItem>
+                        <div style={{ display: isCanBeContinued ? "block " : "none" }}>
+                            <ListItem>
+                                <ListItemText
+                                    primary={"前回の続きから始める。"}
+                                />
+                                <ListItemSecondaryAction>
+                                    <Switch checked={isContinue} onChange={e => { setIsContinue(e.target.checked); setIsShuffle(!e.target.checked && isShuffle); }} />
+                                </ListItemSecondaryAction>
+                            </ListItem>
+                        </div>
                     </List>
                     <Button
                         variant="contained"
