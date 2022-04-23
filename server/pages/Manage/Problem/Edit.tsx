@@ -64,7 +64,7 @@ interface IProps {
     }[]
 }
 
-const ChoicesList = (props:{ choicesList:any[], setChoicesList:(a:any)=>any}) => {
+const ChoicesList = (props: { choicesList: any[], setChoicesList: (a: any) => any }) => {
     const choicesList = props.choicesList;
     const setChoicesList = props.setChoicesList;
     const list: JSX.Element[] = [];
@@ -175,6 +175,16 @@ const Edit = (props: IProps) => {
                 <div style={{ margin: "15px" }}></div>
                 {choiceType == 0 ? (
                     <>
+                        <Button variant="contained" color="primary" onClick={() => {
+                            const tlist = choicesList.slice();
+                            tlist.push({
+                                id: Math.max(...choicesList.map(e => e.id)) + 1,
+                                collect_flag: false,
+                                choice_text: ""
+                            });
+                            setChoicesList(tlist);
+                        }
+                        }>選択肢追加</Button>
                         <Typography variant="body1">回答用の選択肢</Typography>
                         <div style={{ margin: "15px" }}></div>
                         <div style={{ display: "flex" }}>
