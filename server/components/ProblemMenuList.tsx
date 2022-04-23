@@ -41,7 +41,7 @@ const ProblemMenuListElemet = (props: IElemetPorps) => {
                 key={props.problem.hash}
             >
                 <Typography>{
-                    props.problem.problem_body.split("\n")
+                    (props.problem.problem_body || "").split("\n") //null対応
                         .map((v, i, a) => (
                             <>
                                 <Rlw str={v} />
