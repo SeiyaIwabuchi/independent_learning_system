@@ -16,13 +16,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         where: {
             hash: problemHash
         },
-        include:[{
+        include: [{
             model: db.t_subjects,
             required: true
         }],
         raw: true
     })
-        .then((r:db.t_problems & {[key:string]:any} | null) =>
+        .then((r: db.t_problems & { [key: string]: any } | null) =>
             props.problem = {
                 id: r!.id,
                 hash: r!.hash,
@@ -55,6 +55,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 };
 
+function Space() {
+    return <>&nbsp;</>;
+}
+function Rlw(props: { str: string }) {
+    // Replace leading whitespace
+    return (
+        <>
+            {(props.str.match(/^\s+/) || [""])[0].split("").map(() => (
+                <Space />
+            ))}
+            <>{props.str}</>
+        </>
+    );
+}
+
 const Review = (props: {
     problem: {
         id: number,
@@ -63,7 +78,7 @@ const Review = (props: {
         problem_type: number,
         answer_type: number,
         problem_body: string,
-        subject_name:string
+        subject_name: string
     },
     choices: {
         id: string,
@@ -73,30 +88,38 @@ const Review = (props: {
         image_id: number
     }[]
 }) => {
-    const [checked, setChecked] = useState<{[key:string]:boolean}>({});
+    const [checked, setChecked] = useState<{ [key: string]: boolean }>({});
+    const [problem_body, SetProblem_body] = useState([<></>]);
     const getChecked = (key: string) => {
         return checked[key] == true
     };
     const handleSend = async () => {
         await dexieDb.checked.clear();
-        await dexieDb.checked.add({id:0,checked:checked});
+        await dexieDb.checked.add({ id: 0, checked: checked });
         router.push("/Play/Confirm");
     };
-    const handleChenged = (c : any, event: any) => {
+    const handleChenged = (c: any, event: any) => {
         setChecked(
-            Object.assign( 
+            Object.assign(
                 checked,
-                {[c.id]:event.target.checked }
-            ) 
-        ) 
+                { [c.id]: event.target.checked }
+            )
+        )
     };
     useEffect(() => {
         const storeProblem = Object.assign({ choices: props.choices }, props.problem);
         dexieDb.problem.clear()
-        .then(() => {
-            dexieDb.problem.add(storeProblem, storeProblem.id);
-        });
-    },[]);
+            .then(() => {
+                dexieDb.problem.add(storeProblem, storeProblem.id);
+            });
+        SetProblem_body(props.problem.problem_body.split("\n")
+            .map((v, i, a) => (
+                <>
+                    <Rlw str={v} />
+                    <br />
+                </>
+            )));
+    }, []);
     return (
         <ReviewCommon appbar={{ title: "復習" }} snackBar={{}}>
             <div>
@@ -116,16 +139,16 @@ const Review = (props: {
                             padding: "3px",
                             marginBottom: "50px"
                         }}>
-                        <Typography variant="body1">{props.problem.problem_body}</Typography>
+                        <Typography variant="body1">{problem_body}</Typography>
                     </div>
-                    <form style={{marginBottom:"20px"}}>
+                    <form style={{ marginBottom: "20px" }}>
                         <FormControl component="fieldset" >
                             <FormLabel component="legend">選択肢</FormLabel>
                             <FormGroup>
                                 {
                                     props.choices.map(c => (
                                         <FormControlLabel
-                                            control={<Checkbox value={getChecked(c.id)} onChange={(event) => handleChenged(c,event)}/>}
+                                            control={<Checkbox value={getChecked(c.id)} onChange={(event) => handleChenged(c, event)} />}
                                             label={c.choice_text}
                                         />
                                     ))

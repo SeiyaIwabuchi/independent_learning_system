@@ -1,45 +1,69 @@
-import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
+import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox, Typography } from "@material-ui/core";
 import React, { Dispatch, SetStateAction } from "react";
 import { ProblemForm } from "../form_schemas/ts/ProblemForm";
 
-export interface IElemetPorps{
-    problem:{
-        hash : string,
-        problem_body : string | null,
+export interface IElemetPorps {
+    problem: {
+        hash: string,
+        problem_body: string | null,
     },
-    subject:{
-        hash : string,
+    subject: {
+        hash: string,
     },
-    deleteList : [
-        string[], 
+    deleteList: [
+        string[],
         Dispatch<SetStateAction<string[]>>
-       ]
+    ]
 }
 
-const ProblemMenuListElemet = (props : IElemetPorps) => {
+function Space() {
+    return <>&nbsp;</>;
+}
+function Rlw(props: { str: string }) {
+    // Replace leading whitespace
     return (
         <>
-            <ListItem 
-                button={true} 
-                component="a" 
+            {(props.str.match(/^\s+/) || [""])[0].split("").map(() => (
+                <Space />
+            ))}
+            <>{props.str}</>
+        </>
+    );
+}
+
+const ProblemMenuListElemet = (props: IElemetPorps) => {
+    return (
+        <>
+            <ListItem
+                button={true}
+                component="a"
                 href={`/Manage/Problem/Edit?problemHash=${props.problem.hash}&subjectHash=${props.subject.hash}`}
                 key={props.problem.hash}
             >
-                <ListItemText
+                <Typography>{
+                    props.problem.problem_body.split("\n")
+                        .map((v, i, a) => (
+                            <>
+                                <Rlw str={v} />
+                                <br />
+                            </>
+                        ))
+                }</Typography>
+                {/* <ListItemText
                     primary={props.problem.problem_body}
-                />
+                /> */}
                 <ListItemSecondaryAction>
                     <Checkbox onChange={
                         (event) => {
                             let deleteList = props.deleteList[0].slice();
-                            if(deleteList.indexOf(props.problem.hash) == -1)
+                            if (deleteList.indexOf(props.problem.hash) == -1)
                                 deleteList.push(props.problem.hash);
                             else
-                                deleteList.splice( deleteList.indexOf(props.problem.hash), 1);
+                                deleteList.splice(deleteList.indexOf(props.problem.hash), 1);
                             props.deleteList[1](deleteList);
                         }
                     }
-                    checked={ props.deleteList[0].indexOf(props.problem.hash) != -1 }
+                        checked={props.deleteList[0].indexOf(props.problem.hash) != -1}
                     />
                 </ListItemSecondaryAction>
             </ListItem>
@@ -48,23 +72,23 @@ const ProblemMenuListElemet = (props : IElemetPorps) => {
 };
 
 const ProblemMenuList = (
-    props : {
-        menuList : ProblemForm[],
-        deleteList:[
-            string[], 
+    props: {
+        menuList: ProblemForm[],
+        deleteList: [
+            string[],
             Dispatch<SetStateAction<string[]>>
         ],
-        subject:{
-            hash : string,
+        subject: {
+            hash: string,
         },
     }) => {
-    const menu : JSX.Element[] = [];
-    for(let i=0;i<props.menuList.length;i++){
+    const menu: JSX.Element[] = [];
+    for (let i = 0; i < props.menuList.length; i++) {
         let prop = props.menuList[i];
         menu.push(
-            <ProblemMenuListElemet subject={props.subject} problem={prop} deleteList={props.deleteList} key={prop.hash}/>
+            <ProblemMenuListElemet subject={props.subject} problem={prop} deleteList={props.deleteList} key={prop.hash} />
         );
-        if(i < props.menuList.length -1)
+        if (i < props.menuList.length - 1)
             menu.push(<Divider />);
     }
     return (
