@@ -75,7 +75,7 @@ const Edit = (props: IProps) => {
         = useState("");
     const [snackBarState, setSnackBarState] = useState(false);
     const [snackBarMsg, setSnackBarMsg] = useState("");
-    
+
     return (
         <ManagementCommon
             pageTitle="問題作成"
@@ -116,8 +116,8 @@ const Edit = (props: IProps) => {
                                 console.log(err);
                                 alert(err);
                             });
-                            router.push(`/Manage/Problem/List?subjectHash=${props.subjectHash}`);
-                    }else{
+                        router.push(`/Manage/Problem/List?subjectHash=${props.subjectHash}`);
+                    } else {
                         setSnackBarMsg("問題文を入力してください。");
                         setSnackBarState(true);
                     }
@@ -163,6 +163,16 @@ const Edit = (props: IProps) => {
                 <div style={{ margin: "15px" }}></div>
                 {choiceType == 0 ? (
                     <>
+                        <Button variant="contained" color="primary" onClick={() => {
+                            const tlist = choicesList.slice();
+                            tlist.push({
+                                id: Math.max(...choicesList.map(e => e.id)) + 1,
+                                collect_flag: false,
+                                choice_text: ""
+                            });
+                            setChoicesList(tlist);
+                        }
+                        }>選択肢追加</Button>
                         <Typography variant="body1">回答用の選択肢</Typography>
                         <div style={{ margin: "15px" }}></div>
                         <div style={{ display: "flex" }}>
