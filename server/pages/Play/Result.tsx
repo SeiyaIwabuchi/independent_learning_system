@@ -14,6 +14,15 @@ const List = () => {
         numOfCollect: 0,
         rate: 0
     });
+    const endAnswer = () => {
+        // problem_hash_orderとcurrentProblemとproblemを初期化する。
+        dexieDb.problem_hash_order.clear();
+        dexieDb.currentProblem.clear();
+        dexieDb.problem.clear();
+        dexieDb.checked.clear();
+        dexieDb.answerList.clear();
+        router.push("/Play/SubjectList");
+    };
     useEffect(() => {
         dexieDb.problem.toArray()
         .then(e => setSubjectName(e[0].subject_name));
@@ -60,7 +69,7 @@ const List = () => {
                             padding: "10px"
                         }}>
                         <ReviewResultList resultList={problemList} />
-                        <Button variant="contained" color="primary" onClick={() => router.push("/Play/SubjectList") }>教科一覧</Button>
+                        <Button variant="contained" color="primary" onClick={endAnswer}>回答を終了する</Button>
                     </div>
                 </div>
             </ReviewCommon>

@@ -62,8 +62,8 @@ function Rlw(props: { str: string }) {
     // Replace leading whitespace
     return (
         <>
-            {(props.str.match(/^\s+/) || [""])[0].split("").map(() => (
-                <Space />
+            {(props.str.match(/^\s+/) || [""])[0].split("").map((v, i) => (
+                <Space key={i}/>
             ))}
             <>{props.str}</>
         </>

@@ -76,7 +76,6 @@ const Review = () => {
                                 collect[parseInt(e)] == (arrayChecked[0].checked[e] == undefined ? false : arrayChecked[0].checked[e])
                         )
                             .forEach(e => {
-                                console.log(e);
                                 isCollectResult = isCollectResult && e;
                             });
                         dexieDb.answerList.add({
