@@ -8,64 +8,85 @@ import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
 import { dexieDb, IChoices, IProblem_hash_order } from "../../models/dexie";
 
+function Space() {
+    return <>&nbsp;</>;
+}
+function Rlw(props: { str: string }) {
+    // Replace leading whitespace
+    return (
+        <>
+            {(props.str.match(/^\s+/) || [""])[0].split("").map(() => (
+                <Space />
+            ))}
+            <>{props.str}</>
+        </>
+    );
+}
+
 const Review = () => {
-    const [problemBody, setProblemBody] = useState("");
+    const [problemBody, setProblemBody] = useState([<></>]);
     const [collectChoice, setCollectChoice] = useState<IChoices[]>([]);
     const [choiced, setChoiced] = useState<IChoices[]>([]);
     const [isMatch, setIsMatch] = useState<boolean>(false);
     const [subjectName, setSubjectName] = useState("");
     const handleClick = async () => {
-        let problemHashList:string[] = [];
+        let problemHashList: string[] = [];
         let currentProblemId = -1;
         await dexieDb.problem_hash_order.toArray()
-        .then(array => {
-            problemHashList = array.map(e => e.hash);
-        });
+            .then(array => {
+                problemHashList = array.map(e => e.hash);
+            });
         await dexieDb.currentProblem.toArray()
-        .then(e => currentProblemId = e[0].id);
-        if(problemHashList.length - 1 > currentProblemId){
+            .then(e => currentProblemId = e[0].id);
+        if (problemHashList.length - 1 > currentProblemId) {
             await dexieDb.currentProblem.clear();
-            await dexieDb.currentProblem.add({id:++currentProblemId});
+            await dexieDb.currentProblem.add({ id: ++currentProblemId });
             const nextProblemHash = problemHashList[currentProblemId];
             router.push(`/Play/Review?problemHash=${nextProblemHash}`);
-        }else{
+        } else {
             router.push(`/Play/Result`);
         }
     };
     // useEffectの第２引数には変数（ステートフック）を記述する。変数が更新されるとuseEffectに設定した関数が呼び出される。
     useEffect(() => {
         dexieDb.problem.toArray()
-        .then(array => {
-            setProblemBody(array[0].problem_body);
-            setSubjectName(array[0].subject_name)
-            setCollectChoice(
-                array[0].choices.
-                filter(e => e.collect_flag)
-            );
-            dexieDb.checked.toArray()
-            .then(arrayChecked => {
-                setChoiced(array[0].choices.filter(e => arrayChecked[0].checked[e.id]));
-                const collect:{[key:number]:boolean} = {};
-                array[0].choices.forEach(
-                    e => collect[parseInt(e.id)] = e.collect_flag
+            .then(array => {
+                setProblemBody(array[0].problem_body.split("\n")
+                    .map((v, i, a) => (
+                        <>
+                            <Rlw str={v} />
+                            <br />
+                        </>
+                    )));
+                setSubjectName(array[0].subject_name)
+                setCollectChoice(
+                    array[0].choices.
+                        filter(e => e.collect_flag)
                 );
-                let isCollectResult = true;
-                Object.keys(collect).map(
-                    e => 
-                        collect[parseInt(e)] == (arrayChecked[0].checked[e] == undefined ? false : arrayChecked[0].checked[e])
-                )
-                .forEach(e => {
-                    console.log(e);
-                    isCollectResult = isCollectResult && e;
-                });
-                dexieDb.answerList.add({
-                    hash: array[0].hash,
-                    problemBody: array[0].problem_body,
-                    isCollect: isCollectResult,
-                });
-                setIsMatch(isCollectResult);
+                dexieDb.checked.toArray()
+                    .then(arrayChecked => {
+                        setChoiced(array[0].choices.filter(e => arrayChecked[0].checked[e.id]));
+                        const collect: { [key: number]: boolean } = {};
+                        array[0].choices.forEach(
+                            e => collect[parseInt(e.id)] = e.collect_flag
+                        );
+                        let isCollectResult = true;
+                        Object.keys(collect).map(
+                            e =>
+                                collect[parseInt(e)] == (arrayChecked[0].checked[e] == undefined ? false : arrayChecked[0].checked[e])
+                        )
+                            .forEach(e => {
+                                console.log(e);
+                                isCollectResult = isCollectResult && e;
+                            });
+                        dexieDb.answerList.add({
+                            hash: array[0].hash,
+                            problemBody: array[0].problem_body,
+                            isCollect: isCollectResult,
+                        });
+                        setIsMatch(isCollectResult);
+                    });
             });
-        });
     }, []);
     return (
         <ReviewCommon appbar={{ title: "答え合わせ" }} snackBar={{}}>
@@ -90,35 +111,35 @@ const Review = () => {
                     </div>
                     <Typography variant="h5" align="center" color="secondary" style={{ marginBottom: "10px" }}>
                         {
-                            isMatch?"正解":"不正解"
+                            isMatch ? "正解" : "不正解"
                         }
                     </Typography>
                     <FormControl component="fieldset" style={{ marginBottom: "20px" }}>
-                            <FormLabel component="legend">答え</FormLabel>
-                            <FormGroup>
-                                {
-                                    collectChoice.map(c => (
-                                        <FormControlLabel
-                                            control={<Checkbox checked={true} disabled />}
-                                            label={c.choice_text}
-                                        />
-                                    ))
-                                }
-                            </FormGroup>
-                        </FormControl>
+                        <FormLabel component="legend">答え</FormLabel>
+                        <FormGroup>
+                            {
+                                collectChoice.map(c => (
+                                    <FormControlLabel
+                                        control={<Checkbox checked={true} disabled />}
+                                        label={c.choice_text}
+                                    />
+                                ))
+                            }
+                        </FormGroup>
+                    </FormControl>
                     <FormControl component="fieldset" style={{ marginBottom: "20px" }}>
-                            <FormLabel component="legend">あなたの解答</FormLabel>
-                            <FormGroup>
-                                {
-                                    choiced.map(c => (
-                                        <FormControlLabel
-                                            control={<Checkbox checked={true} disabled />}
-                                            label={c.choice_text}
-                                        />
-                                    ))
-                                }
-                            </FormGroup>
-                        </FormControl>
+                        <FormLabel component="legend">あなたの解答</FormLabel>
+                        <FormGroup>
+                            {
+                                choiced.map(c => (
+                                    <FormControlLabel
+                                        control={<Checkbox checked={true} disabled />}
+                                        label={c.choice_text}
+                                    />
+                                ))
+                            }
+                        </FormGroup>
+                    </FormControl>
                     <Button variant="contained" color="primary" style={{ marginBottom: "20px" }} onClick={handleClick}>{"次の問題"}</Button>
                 </div>
             </div>

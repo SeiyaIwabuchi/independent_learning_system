@@ -51,8 +51,19 @@ module.exports = {
         answer_type : [0,1]
       }
     });
+    await queryInterface.addConstraint('t_problems', {
+      fields : ["subject_id"],
+      type: 'foreign key',
+      name: 'fk_constraint_subjects',
+      references: {
+        table: 't_subjects',
+        field: 'id'
+      },
+      onDelete: 'cascade',
+      onUpdate: 'cascade'
+    });
     // ダミーデータの追加
-    queryInterface.bulkInsert('t_problems',[
+    await queryInterface.bulkInsert('t_problems',[
       {
         id : 1, //
         hash : "bb6d6053bb5561a075f0baf4547634dbb46457c8a5aa75ac2992518111858738",
