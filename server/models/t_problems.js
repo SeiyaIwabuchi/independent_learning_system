@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     subject_id: DataTypes.INTEGER,
     problem_type: DataTypes.INTEGER,
     answer_type: DataTypes.INTEGER,
-    problem_body: DataTypes.STRING
+    problem_body: DataTypes.STRING(511)
   }, {
     sequelize,
     modelName: 't_problems',
