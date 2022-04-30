@@ -1,5 +1,6 @@
-import { AppBar, Toolbar, Typography, Snackbar } from "@material-ui/core";
-import React, { ReactNode } from "react";
+import { AppBar, Toolbar, Typography, Snackbar, CircularProgress } from "@material-ui/core";
+import React, { ReactNode, useEffect } from "react";
+import LoadingCircular from "./LoadingCirclar";
 
 
 
@@ -14,12 +15,22 @@ interface IProps {
         setState? : React.Dispatch<React.SetStateAction<boolean>>,
         msg? : string
     },
+    loading_circle? : {
+        state? : boolean
+    },
     children:ReactNode
 }
 
 const OuterFrame = (props: IProps) => {
     return (
         <div style={{maxWidth:"800px",margin:"0 auto"}}>
+            <LoadingCircular isLoading={
+                (()=>{
+                    if(!props.loading_circle) return false;
+                    else if(!props.loading_circle.state) false;
+                    else return props.loading_circle.state;
+                })()
+            } msg={"読み込み中です。"}/>
             <AppBar position="fixed">
                 <Toolbar>
                     {props.appbar.leftButton}
