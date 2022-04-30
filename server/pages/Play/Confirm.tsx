@@ -29,6 +29,7 @@ const Review = () => {
     const [choiced, setChoiced] = useState<IChoices[]>([]);
     const [isMatch, setIsMatch] = useState<boolean>(false);
     const [subjectName, setSubjectName] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const handleClick = async () => {
         let problemHashList: string[] = [];
         let currentProblemId = -1;
@@ -49,46 +50,47 @@ const Review = () => {
     };
     // useEffectの第２引数には変数（ステートフック）を記述する。変数が更新されるとuseEffectに設定した関数が呼び出される。
     useEffect(() => {
-        dexieDb.problem.toArray()
-            .then(array => {
-                setProblemBody(array[0].problem_body.split("\n")
-                    .map((v, i, a) => (
-                        <>
-                            <Rlw str={v} />
-                            <br />
-                        </>
-                    )));
-                setSubjectName(array[0].subject_name)
-                setCollectChoice(
-                    array[0].choices.
-                        filter(e => e.collect_flag)
-                );
-                dexieDb.checked.toArray()
-                    .then(arrayChecked => {
-                        setChoiced(array[0].choices.filter(e => arrayChecked[0].checked[e.id]));
-                        const collect: { [key: number]: boolean } = {};
-                        array[0].choices.forEach(
-                            e => collect[parseInt(e.id)] = e.collect_flag
-                        );
-                        let isCollectResult = true;
-                        Object.keys(collect).map(
-                            e =>
-                                collect[parseInt(e)] == (arrayChecked[0].checked[e] == undefined ? false : arrayChecked[0].checked[e])
-                        )
-                            .forEach(e => {
-                                isCollectResult = isCollectResult && e;
-                            });
-                        dexieDb.answerList.add({
-                            hash: array[0].hash,
-                            problemBody: array[0].problem_body,
-                            isCollect: isCollectResult,
-                        });
-                        setIsMatch(isCollectResult);
-                    });
+        const interval = setInterval(()=>setIsLoading(true),500);
+        (async () => {
+            const array = (await dexieDb.problem.toArray());
+            setProblemBody(array[0].problem_body.split("\n")
+                .map((v, i, a) => (
+                    <>
+                        <Rlw str={v} />
+                        <br />
+                    </>
+                )));
+            setSubjectName(array[0].subject_name);
+            setCollectChoice(
+                array[0].choices.
+                    filter(e => e.collect_flag)
+            );
+            const arrayChecked = (await dexieDb.checked.toArray());
+            setChoiced(array[0].choices.filter(e => arrayChecked[0].checked[e.id]));
+            const collect: { [key: number]: boolean } = {};
+            array[0].choices.forEach(
+                e => collect[parseInt(e.id)] = e.collect_flag
+            );
+            let isCollectResult = true;
+            Object.keys(collect).map(
+                e =>
+                    collect[parseInt(e)] == (arrayChecked[0].checked[e] == undefined ? false : arrayChecked[0].checked[e])
+            )
+                .forEach(e => {
+                    isCollectResult = isCollectResult && e;
+                });
+            await dexieDb.answerList.add({
+                hash: array[0].hash,
+                problemBody: array[0].problem_body,
+                isCollect: isCollectResult,
             });
+            setIsMatch(isCollectResult);
+            clearInterval(interval);
+            setIsLoading(false);
+        })();
     }, []);
     return (
-        <ReviewCommon appbar={{ title: "答え合わせ" }} snackBar={{}}>
+        <ReviewCommon appbar={{ title: "答え合わせ" }} snackBar={{}} loading_circle={{state:isLoading}}>
             <div>
                 <Typography variant="body2">{subjectName}</Typography>
                 <div
