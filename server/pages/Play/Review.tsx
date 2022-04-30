@@ -63,7 +63,7 @@ function Rlw(props: { str: string }) {
     return (
         <>
             {(props.str.match(/^\s+/) || [""])[0].split("").map((v, i) => (
-                <Space key={i}/>
+                <Space key={i} />
             ))}
             <>{props.str}</>
         </>
@@ -90,6 +90,7 @@ const Review = (props: {
 }) => {
     const [checked, setChecked] = useState<{ [key: string]: boolean }>({});
     const [problem_body, SetProblem_body] = useState([<></>]);
+    const [isLoading, setIsLoading] = useState(false);
     const getChecked = (key: string) => {
         return checked[key] == true
     };
@@ -107,21 +108,24 @@ const Review = (props: {
         )
     };
     useEffect(() => {
-        const storeProblem = Object.assign({ choices: props.choices }, props.problem);
-        dexieDb.problem.clear()
-            .then(() => {
-                dexieDb.problem.add(storeProblem, storeProblem.id);
-            });
-        SetProblem_body(props.problem.problem_body.split("\n")
-            .map((v, i, a) => (
-                <>
-                    <Rlw str={v} />
-                    <br />
-                </>
-            )));
+        const interval = setInterval(()=>setIsLoading(true),500);
+        (async () => {
+            const storeProblem = Object.assign({ choices: props.choices }, props.problem);
+            await dexieDb.problem.clear();
+            await dexieDb.problem.add(storeProblem, storeProblem.id);
+            SetProblem_body(props.problem.problem_body.split("\n")
+                .map((v, i, a) => (
+                    <>
+                        <Rlw str={v} />
+                        <br />
+                    </>
+                )));
+            clearInterval(interval);
+            setIsLoading(false);
+        })();
     }, []);
     return (
-        <ReviewCommon appbar={{ title: "復習" }} snackBar={{}}>
+        <ReviewCommon appbar={{ title: "復習" }} snackBar={{}} loading_circle={{ state: isLoading }}>
             <div>
                 <Typography variant="body2">{props.problem.subject_name}</Typography>
                 <div

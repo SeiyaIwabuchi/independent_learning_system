@@ -45,6 +45,7 @@ const SubjectList = (props: { problemHashList: string[], subjectId:number }) => 
     const [isShuffle, setIsShuffle] = useState(false);
     const [isCanBeContinued, setIsCanBeContinued] = useState(false);
     const [isContinue, setIsContinue] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const handle = async () => {
         let nextProblemNumber = 0;
         if (!isContinue) {
@@ -74,6 +75,7 @@ const SubjectList = (props: { problemHashList: string[], subjectId:number }) => 
         router.push(`/Play/Review?problemHash=${nextProblemHash}`)
     };
     useEffect(() => {
+        const interval = setInterval(()=>setIsLoading(true),500);
         // problem_hash_orderとcurrentProblemとproblemがdexieDBにあるときかつ
         // 教科がsubject_idが一致するときは
         // 前回から継続できると判断する。
@@ -81,10 +83,12 @@ const SubjectList = (props: { problemHashList: string[], subjectId:number }) => 
             const count = (await dexieDb.problem_hash_order.count()) + (await dexieDb.currentProblem.count()) + (await dexieDb.problem.count());
             const remain = ((await dexieDb.problem.toArray())[0] || {subject_id:-1}).subject_id;
             setIsCanBeContinued(count > 0 && props.subjectId == remain);
+            clearInterval(interval);
+            setIsLoading(false);
         })();
-    });
+    },[]);
     return (
-        <ReviewCommon appbar={{ title: "オプション" }} snackBar={{}}>
+        <ReviewCommon appbar={{ title: "オプション" }} snackBar={{}} loading_circle={{state:isLoading}}>
             <div>
                 <div
                     style={{

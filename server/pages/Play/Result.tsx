@@ -14,6 +14,7 @@ const List = () => {
         numOfCollect: 0,
         rate: 0
     });
+    const [isLoading, setIsLoading] = useState(false);
     const endAnswer = () => {
         // problem_hash_orderとcurrentProblemとproblemを初期化する。
         dexieDb.problem_hash_order.clear();
@@ -24,11 +25,10 @@ const List = () => {
         router.push("/Play/SubjectList");
     };
     useEffect(() => {
-        dexieDb.problem.toArray()
-        .then(e => setSubjectName(e[0].subject_name));
-
-        dexieDb.answerList.toArray()
-        .then(e => {
+        const interval = setInterval(()=>setIsLoading(true),500);
+        (async ()=>{
+            setSubjectName((await dexieDb.problem.toArray())[0].subject_name);
+            const e = await dexieDb.answerList.toArray();
             setProblemList(
                 e.reverse().map(ee => {
                     return {problemBody:ee.problemBody,isCollect:ee.isCollect,hash:ee.hash} 
@@ -39,12 +39,14 @@ const List = () => {
             sta.number = e.length;
             sta.rate = sta.numOfCollect / sta.number * 100;
             setStatistics(sta);
-        });
+            clearInterval(interval);
+            setIsLoading(false);
+        })();
 
     },[]);
     return (
         <>
-            <ReviewCommon appbar={{ title: "結果" }} snackBar={{}}>
+            <ReviewCommon appbar={{ title: "結果" }} snackBar={{}} loading_circle={{state:isLoading}}>
                 <div>
                     <div
                         style={{
