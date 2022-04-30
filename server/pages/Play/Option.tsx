@@ -22,15 +22,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         order: ["id"]
     })).map(ee => ee.hash);
     const subjectId = (await db.t_subjects.findOne({
-        attributes:["id"],
-        where:{
-            hash:subjectHash
+        attributes: ["id"],
+        where: {
+            hash: subjectHash
         }
     }))!.id;
     return {
         props: {
             problemHashList: problemHashList,
-            subjectId:subjectId
+            subjectId: subjectId
         }
     }
 };
@@ -41,7 +41,7 @@ function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-const SubjectList = (props: { problemHashList: string[], subjectId:number }) => {
+const SubjectList = (props: { problemHashList: string[], subjectId: number }) => {
     const [isShuffle, setIsShuffle] = useState(false);
     const [isCanBeContinued, setIsCanBeContinued] = useState(false);
     const [isContinue, setIsContinue] = useState(false);
@@ -67,28 +67,32 @@ const SubjectList = (props: { problemHashList: string[], subjectId:number }) => 
             await dexieDb.currentProblem.clear();
             await dexieDb.currentProblem.add({ id: 0 });
             await dexieDb.answerList.clear();
-        }else{
+        } else {
             nextProblemNumber = (await dexieDb.currentProblem.toArray())[0]!.id;
         }
         let nextProblemHash = "";
-        nextProblemHash = (await dexieDb.problem_hash_order.get(nextProblemNumber))!.hash;
-        router.push(`/Play/Review?problemHash=${nextProblemHash}`)
+        if ((await dexieDb.problem_hash_order.get(nextProblemNumber)) === undefined) {
+            router.push(`/Play/SubjectList`);
+        } else {
+            nextProblemHash = (await dexieDb.problem_hash_order.get(nextProblemNumber))!.hash;
+            router.push(`/Play/Review?problemHash=${nextProblemHash}`);
+        }
     };
     useEffect(() => {
-        const interval = setInterval(()=>setIsLoading(true),500);
+        const interval = setInterval(() => setIsLoading(true), 500);
         // problem_hash_orderとcurrentProblemとproblemがdexieDBにあるときかつ
         // 教科がsubject_idが一致するときは
         // 前回から継続できると判断する。
         (async () => {
             const count = (await dexieDb.problem_hash_order.count()) + (await dexieDb.currentProblem.count()) + (await dexieDb.problem.count());
-            const remain = ((await dexieDb.problem.toArray())[0] || {subject_id:-1}).subject_id;
+            const remain = ((await dexieDb.problem.toArray())[0] || { subject_id: -1 }).subject_id;
             setIsCanBeContinued(count > 0 && props.subjectId == remain);
             clearInterval(interval);
             setIsLoading(false);
         })();
-    },[]);
+    }, []);
     return (
-        <ReviewCommon appbar={{ title: "オプション" }} snackBar={{}} loading_circle={{state:isLoading}}>
+        <ReviewCommon appbar={{ title: "オプション" }} snackBar={{}} loading_circle={{ state: isLoading }}>
             <div>
                 <div
                     style={{
