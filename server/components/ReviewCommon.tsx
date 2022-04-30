@@ -18,6 +18,9 @@ const ReviewCommon = (
             setState?: React.Dispatch<React.SetStateAction<boolean>> | undefined;
             msg?: string | undefined;
         },
+        loading_circle? : {
+            state? : boolean
+        },
         children: JSX.Element;
     }
 ) => {
@@ -27,7 +30,9 @@ const ReviewCommon = (
             title: props.appbar.title,
             rightButton: props.appbar.rightButton,
             leftButton: <IconButton onClick={() => isDrawerOpen[1](true)}><MenuIcon /></IconButton>
-        }} snackbar={props.snackBar}>
+        }} 
+        snackbar={props.snackBar}
+        loading_circle={props.loading_circle}>
             <Drawer anchor="left" open={isDrawerOpen[0]} onClose={() => isDrawerOpen[1](false)}>
                 <div style={{ marginTop: "50px" }} />
                 <Divider />

@@ -17,13 +17,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const Check = () => {
     const [checkedList, setCheckedList] = useState<IMarkList[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
-        dexieDb.MarkList.toArray()
-            .then(array => setCheckedList(array));
+        const interval = setInterval(()=>setIsLoading(true),500);
+        (async ()=>{
+            setCheckedList((await dexieDb.MarkList.toArray()));
+            clearInterval(interval);
+            setIsLoading(false);
+        })();
     }, []);
     return (
         <>
-            <ReviewCommon appbar={{ title: "チェックリスト" }} snackBar={{}}>
+            <ReviewCommon appbar={{ title: "チェックリスト" }} snackBar={{}} loading_circle={{state:isLoading}}>
                 <>
                     <div
                         style={{
