@@ -22,6 +22,7 @@ export interface IProblem{
     problem_type : number;
     answer_type : number;
     problem_body : string;
+    problem_image_url : string;
     choices : IChoices[];
     subject_name: string;
 }
@@ -38,19 +39,17 @@ export interface ICurrentProblem{
 }
 type currentProblem = Table<ICurrentProblem,number>
 
-export interface IAnswerList{
-    hash: string,
-    problemBody: string,
+export interface IAnswerList extends IProblem{
     isCollect: boolean
-}
+};
 type answerList = Table<IAnswerList,string>
 
-export interface IMarkList{
-    hash: string,
-    problemBody: string,
-    isCollect: boolean
-}
-type MarkList = Table<IMarkList,string>
+// export interface IMarkList{
+//     hash: string,
+//     problemBody: string,
+//     isCollect: boolean
+// }
+type MarkList = Table<IAnswerList,string>
 
 export interface ITheme{
     themeType: string;
