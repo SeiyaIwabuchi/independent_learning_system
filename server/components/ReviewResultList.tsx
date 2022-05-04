@@ -3,10 +3,10 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ProblemForm } from "../form_schemas/ts/ProblemForm";
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
-import { dexieDb } from "../models/dexie";
+import { dexieDb, IAnswerList } from "../models/dexie";
 
 export interface IElemetPorps {
-    resultProblem: { problemBody: string, isCollect: boolean, hash: string }
+    resultProblem: IAnswerList
 }
 
 function Space() {
@@ -33,17 +33,23 @@ const ReviewResultListElemet = (props: IElemetPorps) => {
     return (
         <>
             <ListItem
-                key={props.resultProblem.problemBody}
+                key={props.resultProblem.hash}
             >
-                <Typography
-                // primary={props.resultProblem.problemBody}
-                >{props.resultProblem.problemBody.split("\n")
-                    .map((v, i, a) => (
-                        <>
-                            <Rlw str={v} />
-                            <br />
-                        </>
-                    ))}</Typography>
+                {
+                    props.resultProblem.problem_type == 0 ?
+                        <Typography
+                        // primary={props.resultProblem.problemBody}
+                        >{props.resultProblem.problem_body.split("\n")
+                            .map((v, i, a) => (
+                                <>
+                                    <Rlw str={v} />
+                                    <br />
+                                </>
+                            ))}</Typography>
+                        :
+                        <img src={props.resultProblem.problem_image_url || "http://via.placeholder.com/500x300"} width="100%"></img>
+                }
+
                 <div style={{ marginRight: "5px" }}>
                     {
                         props.resultProblem.isCollect ?
@@ -67,7 +73,7 @@ const ReviewResultListElemet = (props: IElemetPorps) => {
 
 const ReviewResultList = (
     props: {
-        resultList: { problemBody: string, isCollect: boolean, hash: string }[]
+        resultList: IAnswerList[]
     }) => {
     const resultList: JSX.Element[] = [];
     for (let i = 0; i < props.resultList.length; i++) {

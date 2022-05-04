@@ -8,7 +8,7 @@ import { dexieDb, IAnswerList } from "../../models/dexie";
 const List = () => {
     const [subjectName, setSubjectName] = useState("");
     const [problemList,setProblemList] = 
-        useState<{problemBody:string,isCollect:boolean,hash:string}[]>([]);
+        useState<IAnswerList[]>([]);
     const [statistics, setStatistics] = useState({
         number: 0,
         numOfCollect: 0,
@@ -30,9 +30,7 @@ const List = () => {
         dexieDb.answerList.toArray()
         .then(e => {
             setProblemList(
-                e.reverse().map(ee => {
-                    return {problemBody:ee.problemBody,isCollect:ee.isCollect,hash:ee.hash} 
-                })
+                e.reverse()
             );
             const sta = Object.assign({},statistics);
             sta.numOfCollect = e.filter(ee => ee.isCollect).length;

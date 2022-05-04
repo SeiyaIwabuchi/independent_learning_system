@@ -6,6 +6,8 @@ export interface IElemetPorps {
     problem: {
         hash: string,
         problem_body: string | null,
+        problem_type: number | null,
+        problem_image_url: string | null,
     },
     subject: {
         hash: string,
@@ -40,15 +42,20 @@ const ProblemMenuListElemet = (props: IElemetPorps) => {
                 href={`/Manage/Problem/Edit?problemHash=${props.problem.hash}&subjectHash=${props.subject.hash}`}
                 key={props.problem.hash}
             >
-                <Typography>{
-                    (props.problem.problem_body || "").split("\n") //null対応
-                        .map((v, i, a) => (
-                            <>
-                                <Rlw str={v} />
-                                <br />
-                            </>
-                        ))
-                }</Typography>
+                {
+                    props.problem.problem_type == 0 ?
+                    <Typography>{
+                        (props.problem.problem_body || "").split("\n") //null対応
+                            .map((v, i, a) => (
+                                <>
+                                    <Rlw str={v} />
+                                    <br />
+                                </>
+                            ))
+                    }</Typography>
+                    :
+                    <img src={props.problem.problem_image_url || "http://via.placeholder.com/500x300"} width="90%"></img>
+                }
                 {/* <ListItemText
                     primary={props.problem.problem_body}
                 /> */}

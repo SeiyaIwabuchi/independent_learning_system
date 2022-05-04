@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
-import { dexieDb, IChoices, IProblem_hash_order } from "../../models/dexie";
+import { dexieDb, IChoices, IProblem, IProblem_hash_order } from "../../models/dexie";
 
 function Space() {
     return <>&nbsp;</>;
@@ -29,6 +29,7 @@ const Review = () => {
     const [choiced, setChoiced] = useState<IChoices[]>([]);
     const [isMatch, setIsMatch] = useState<boolean>(false);
     const [subjectName, setSubjectName] = useState("");
+    const [problem, setProblem] = useState<IProblem>();
     const handleClick = async () => {
         let problemHashList: string[] = [];
         let currentProblemId = -1;
@@ -51,6 +52,7 @@ const Review = () => {
     useEffect(() => {
         dexieDb.problem.toArray()
             .then(array => {
+                setProblem(array[0]);
                 setProblemBody(array[0].problem_body.split("\n")
                     .map((v, i, a) => (
                         <>
@@ -78,11 +80,9 @@ const Review = () => {
                             .forEach(e => {
                                 isCollectResult = isCollectResult && e;
                             });
-                        dexieDb.answerList.add({
-                            hash: array[0].hash,
-                            problemBody: array[0].problem_body,
+                        dexieDb.answerList.add(Object.assign({
                             isCollect: isCollectResult,
-                        });
+                        }, array[0]));
                         setIsMatch(isCollectResult);
                     });
             });
@@ -106,7 +106,12 @@ const Review = () => {
                             padding: "3px",
                             marginBottom: "20px"
                         }}>
-                        <Typography variant="body1">{problemBody}</Typography>
+                        {
+                            (problem||{}).problem_type == 0 ?
+                                <Typography variant="body1">{problemBody}</Typography>
+                                :
+                                <img src={(problem||{}).problem_image_url || "http://via.placeholder.com/500x300"} width="100%"></img>
+                        }
                     </div>
                     <Typography variant="h5" align="center" color="secondary" style={{ marginBottom: "10px" }}>
                         {
