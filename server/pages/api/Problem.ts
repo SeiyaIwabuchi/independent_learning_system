@@ -16,6 +16,7 @@ type problem = {
     'answer_type'?: number;
     'problem_body'?: string;
     'subjectHash'?: string;
+    'problemImageURL'?:string;
     'choices': {
         id: number,
         problem_id: number,
@@ -34,7 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             const problem: problem = JSON.parse(req.body);
             validate = new ajv().compile(problemFormJson.definitions.problem_POST);
             isValid = await validate(problem);
-            isValid &&= problem.problem_body!.length > 0;
+            isValid &&= (problem.problem_body!.length > 0 || problem.problem_type! == 1);
             problem.choices.forEach(e => {isValid &&= e.choice_text.length > 0});
         } else if (req.method == "PUT") {
             const problem: problem = JSON.parse(req.body);
@@ -62,7 +63,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 }).then(e => subject_id = e!.id)
                 .catch(err => {
                     res.status(500).json({"error" : err});
-                    return;
+                    console.log(err);
                 });
                 let problemRec: t_problems;
                 await db.t_problems.create({
@@ -71,10 +72,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     subject_id: subject_id!,
                     problem_type: problem.problem_type!,
                     answer_type: problem.answer_type!,
-                    problem_body: problem.problem_body
+                    problem_body: problem.problem_body,
+                    problem_image_url: problem.problemImageURL
                 }).then(r => problemRec = r)
                 .catch(err => {
                     res.status(500).json({"error" : err});
+                    console.log(err);
                     throw err;
                 });
                 await db.t_choices.bulkCreate(
@@ -89,6 +92,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     })
                 ).catch(err => {
                     res.status(500).json({"error" : err});
+                    console.log(err);
                     throw err;
                 });
                 res.status(200).json({message: "ok"});
@@ -147,7 +151,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 res.status(200).json({message: "ok"});
             }
         }else{
-            res.status(400).json({error: validate!.errors});
+            res.status(400).json({error: validate!.errors||"validation falure"});
         }
     } else {
         res.json({ message: "Unauthorise" })
