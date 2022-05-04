@@ -38,3 +38,5 @@ next.config.js
 
 #sqlite databas files
 sqlitDatabase/*
+
+public/uploads/*
