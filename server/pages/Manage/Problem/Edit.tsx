@@ -29,6 +29,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             problem_id: problem.id
         },
     }).then(e => {
+        console.log(e);
+        
         choices = []
         let choicesObj: { [key: number]: any } = {};
         for (let a of e) {
@@ -61,7 +63,7 @@ interface IProps {
         problem_image_url: string
     },
     choices: {
-        id: number,
+        id: number | null,
         choice_text: string,
         collect_flag: boolean
     }[]
@@ -254,7 +256,8 @@ const Edit = (props: IProps) => {
                         <Button variant="contained" color="primary" onClick={() => {
                             const tlist = choicesList.slice();
                             tlist.push({
-                                id: Math.max(...choicesList.map(e => e.id)) + 1,
+                                // id: Math.max(...choicesList.map(e => e.id)) + 1,
+                                id: null,
                                 collect_flag: false,
                                 choice_text: ""
                             });
@@ -274,7 +277,8 @@ const Edit = (props: IProps) => {
                         <Button variant="contained" color="primary" onClick={() => {
                             const tlist = choicesList.slice();
                             tlist.push({
-                                id: Math.max(...choicesList.map(e => e.id)) + 1,
+                                // id: Math.max(...choicesList.map(e => e.id)) + 1,
+                                id: null,
                                 collect_flag: false,
                                 choice_text: ""
                             });

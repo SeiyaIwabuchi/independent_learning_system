@@ -145,6 +145,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         problemId = e!.id;
                     });
                 for (let e of problem.choices) {
+                    
                     await db.t_choices.findOne({
                         where: { id: e.id }
                     })
