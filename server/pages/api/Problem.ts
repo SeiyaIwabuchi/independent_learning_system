@@ -56,7 +56,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             validate = new ajv().compile(problemFormJson.definitions.problem_PUT);
             isValid = await validate(problem);
             if (!isValid) {
-                res.status(400).json({ "error": "failure to validate json", "shema": problemFormJson.definitions.problem_PUT });
+                res.status(400).json({ "error": "failure to validate json", "valudate error":validate.errors,"recived" : problem, "shema": problemFormJson.definitions.problem_PUT });
+                // console.log(validate.errors);
+                // console.log(problem);
                 return;
             }
             isValid &&= (problem.problem_body!.length > 0 || problem.problem_type! == 1);
@@ -70,7 +72,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             }
             isValid = await AjvValidater(problemFormJson.definitions.problem_DELETE, problemList);
             if (!isValid) {
-                res.status(400).json({ "error": "failure to validate json", "shema": problemFormJson.definitions.problem_PUT });
+                res.status(400).json({ "error": "failure to validate json", "shema": problemFormJson.definitions.problem_DELETE });
                 return;
             }
         }
@@ -83,7 +85,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 problem = JSON.parse(req.body);
             }
             if (req.method == "POST") {
-                console.log(problem);
                 const hash = crypto.createHash("sha256")
                     .update(problem.problem_body! + new Date().getTime(), "utf8")
                     .digest("hex");
