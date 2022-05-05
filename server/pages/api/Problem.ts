@@ -59,7 +59,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 res.status(400).json({ "error": "failure to validate json", "shema": problemFormJson.definitions.problem_PUT });
                 return;
             }
-            isValid &&= problem.problem_body!.length > 0;
+            isValid &&= (problem.problem_body!.length > 0 || problem.problem_type! == 1);
             problem.choices.forEach(e => { isValid &&= e.choice_text.length > 0 });
         } else if (req.method == "DELETE") {
             let problemList: string[];
