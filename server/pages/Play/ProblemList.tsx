@@ -44,9 +44,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 problems.push({
                     hash: rr["t_problems.hash"],
                     problem_body: rr["t_problems.problem_body"],
-                    subject_id: null,
-                    answer_type: null,
-                    problem_type: null
+                    subject_id: rr["t_problems.subject_id"],
+                    answer_type: rr["t_problems.answer_type"],
+                    problem_type: rr["t_problems.problem_type"],
+                    problem_image_url: rr["t_problems.problem_image_url"]
                 });
             }
         });
@@ -119,7 +120,7 @@ const Problems = (props: { problem: ProblemForm }) => {
     const [checked, setChecked] = useState(false);
     useEffect(() => {
         dexieDb.MarkList.get(props.problem.hash)
-        .then(e => setChecked(e != undefined) );
+            .then(e => setChecked(e != undefined));
     });
     return (
         <ListItem>
@@ -128,11 +129,12 @@ const Problems = (props: { problem: ProblemForm }) => {
                 <Checkbox onChange={async (event) => {
                     setChecked(event.target.checked);
                     if (event.target.checked)
-                        await dexieDb.MarkList.add({
-                            hash: props.problem.hash,
-                            isCollect:false,
-                            problemBody: props.problem.problem_body!
-                        });
+                        await dexieDb.MarkList.add(Object.assign({
+                            isCollect: false,
+                            id: -1,
+                            choices: [],
+                            subject_name: ""
+                        }, props.problem));
                     else
                         await dexieDb.MarkList.delete(props.problem.hash);
                 }} checked={checked} />

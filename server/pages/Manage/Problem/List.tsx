@@ -43,8 +43,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 problems.push({
                     hash : rr["t_problems.hash"],
                     problem_body : rr["t_problems.problem_body"],
-                    subject_id : null,
-                    answer_type : null,
+                    subject_id : -1,
+                    answer_type : -1,
                     problem_type: rr["t_problems.problem_type"],
                     problem_image_url: rr["t_problems.problem_image_url"],
                 });

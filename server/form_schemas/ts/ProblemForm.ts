@@ -1,10 +1,10 @@
 export type ProblemForm = {
     hash : string,
-    subject_id : number | null,
-    problem_type : number | null,
-    answer_type : number | null,
-    problem_body : string | null,
-    problem_image_url : string | null
+    subject_id : number,
+    problem_type : number,
+    answer_type : number,
+    problem_body : string,
+    problem_image_url : string
 };
 
 export type problem_POST = {
