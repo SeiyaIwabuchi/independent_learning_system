@@ -137,7 +137,7 @@
                         "type": "object",
                         "properties": {
                             "id": {
-                                "type": "number",
+                                "type": ["number","null"],
                                 "title": "id"
                             },
                             "choice_text": {
@@ -161,8 +161,7 @@
                         },
                         "required": [
                             "choice_text",
-                            "collect_flag",
-                            "id"
+                            "collect_flag"
                         ]
                     },
                     "title": "choices"
