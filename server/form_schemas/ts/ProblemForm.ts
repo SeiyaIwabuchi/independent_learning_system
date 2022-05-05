@@ -4,6 +4,7 @@ export type ProblemForm = {
     problem_type : number | null,
     answer_type : number | null,
     problem_body : string | null,
+    problem_image_url : string | null
 };
 
 export type problem_POST = {

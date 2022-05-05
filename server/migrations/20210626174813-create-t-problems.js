@@ -27,6 +27,10 @@ module.exports = {
       problem_body: {
         type: Sequelize.STRING
       },
+      problem_image_url: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

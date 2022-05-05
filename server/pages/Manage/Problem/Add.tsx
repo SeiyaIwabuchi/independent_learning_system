@@ -9,7 +9,6 @@ import { useState } from "react";
 import { FormControl } from "@material-ui/core";
 import router from "next/router";
 
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const subjectHash: string = context.query.subjectHash as string;
     return {
@@ -75,6 +74,7 @@ const Edit = (props: IProps) => {
         = useState("");
     const [snackBarState, setSnackBarState] = useState(false);
     const [snackBarMsg, setSnackBarMsg] = useState("");
+    const [localFile, setLocalFile] = useState<File>();
 
     return (
         <ManagementCommon
@@ -90,7 +90,48 @@ const Edit = (props: IProps) => {
             <form
                 onSubmit={async (e) => {
                     e.preventDefault();
-                    if (problemBody.length > 0) {  //validation
+                    let problemImageURL = "";
+                    let nextcloudHost = `http://${process.env.IMAGE_SERVER}/image`;
+
+                    if (problemType == 1) { //画像を問題として使用するときは一度画像単体で送信する
+                        if (localFile != undefined) {
+                            const formData = new FormData();
+                            formData.append("file", localFile);
+                            await fetch(nextcloudHost, {
+                                method: "POST",
+                                body: formData,
+                                mode:"cors",
+                                headers : {
+                                    authorization:process.env.IMAGE_SERVER_AUTH || "auth",
+                                    'Access-Control-Request-Method' : 'POST'
+                                },
+                            })
+                                .then(async res => {
+                                    if (!res.ok) {
+                                        console.log(`status code: ${res.status}`);
+                                        alert(`status code: ${res.status}`);
+                                        res.text().then(resJson => {
+                                            console.log(resJson);
+                                            alert(resJson);
+                                        })
+                                    }else{
+                                        problemImageURL = (await res.json()).url!;
+                                        console.log(problemImageURL);
+                                        
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                    alert(err);
+                                });
+                        }else{
+                            setSnackBarMsg("問題画像を選択してください。");
+                            setSnackBarState(true);
+                            return;
+                        }
+                    }
+
+                    if (problemBody.length > 0 || problemType == 1) {  //validation
                         await fetch("/api/Problem", {
                             method: "POST",
                             body: JSON.stringify({
@@ -99,7 +140,8 @@ const Edit = (props: IProps) => {
                                 problem_type: problemType,
                                 answer_type: choiceType,
                                 problem_body: problemBody,
-                                choices: choicesList
+                                choices: choicesList,
+                                problemImageURL : problemImageURL
                             })
                         })
                             .then(res => {
@@ -110,11 +152,13 @@ const Edit = (props: IProps) => {
                                         console.log(resJson);
                                         alert(resJson);
                                     })
+                                    return;
                                 }
                             })
                             .catch(err => {
                                 console.log(err);
                                 alert(err);
+                                return;
                             });
                         router.push(`/Manage/Problem/List?subjectHash=${props.subjectHash}`);
                     } else {
@@ -144,9 +188,21 @@ const Edit = (props: IProps) => {
                             value={problemBody} multiline onChange={(event) => setProblemBody(event.target.value)} />) :
                         (
                             <>
-                                <Button variant="contained" color="primary">画像追加</Button>
+                                <label htmlFor="upload_image">
+                                    <input
+                                        accept="image/*"
+                                        id="upload_image"
+                                        type="file"
+                                        style={{ display: "none" }}
+                                        onChange={(event) => {
+                                            if (event.target.files == null || !event.target.files[0]) return;
+                                            setLocalFile(event.target.files[0]);
+                                        }}
+                                    />
+                                    <Button variant="contained" color="primary" component="span" style={{ width: "100%" }}>画像追加</Button>
+                                </label>
                                 <div style={{ margin: "15px" }}></div>
-                                <img src={"http://via.placeholder.com/500x300"}></img>
+                                <img src={localFile ? URL.createObjectURL(localFile) : "http://via.placeholder.com/500x300"}></img>
                             </>
                         )
                 }

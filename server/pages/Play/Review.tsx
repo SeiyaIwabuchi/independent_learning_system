@@ -30,7 +30,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 problem_type: r!.problem_type,
                 answer_type: r!.answer_type,
                 problem_body: r!.problem_body,
-                subject_name: r!["t_subject.name"]
+                subject_name: r!["t_subject.name"],
+                problem_image_url: r!.problem_image_url
             }
         );
     await db.t_choices.findAll({
@@ -78,7 +79,8 @@ const Review = (props: {
         problem_type: number,
         answer_type: number,
         problem_body: string,
-        subject_name: string
+        subject_name: string,
+        problem_image_url: string,
     },
     choices: {
         id: string,
@@ -143,7 +145,12 @@ const Review = (props: {
                             padding: "3px",
                             marginBottom: "50px"
                         }}>
-                        <Typography variant="body1">{problem_body}</Typography>
+                        {
+                            props.problem.problem_type == 0 ?
+                                <Typography variant="body1">{problem_body}</Typography>
+                                :
+                                <img src={props.problem.problem_image_url || "http://via.placeholder.com/500x300"} width="100%"></img>
+                        }
                     </div>
                     <form style={{ marginBottom: "20px" }}>
                         <FormControl component="fieldset" >
