@@ -16,7 +16,7 @@ type problem = {
     'answer_type'?: number;
     'problem_body'?: string;
     'subjectHash'?: string;
-    'problemImageURL'?:string;
+    'problemImageURL'?: string;
     'choices': {
         id: number,
         problem_id: number,
@@ -27,25 +27,52 @@ type problem = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    res.setHeader("Content-Type","application/json");
+    res.setHeader("Content-Type", "application/json");
     if (await SessionIdValidater(undefined, req.cookies.sessionId) != `Unauthorised`) {
         let validate: any;
         let isValid = false;
         if (req.method == "POST") {
-            const problem: problem = JSON.parse(req.body);
+            let problem: problem
+            if (req.headers["content-type"] == "application/json") {
+                problem = req.body as problem;
+            } else {
+                problem = JSON.parse(req.body);
+            }
             validate = new ajv().compile(problemFormJson.definitions.problem_POST);
             isValid = await validate(problem);
+            if (!isValid) {
+                res.status(400).json({ "error": "failure to validate json", "shema": problemFormJson.definitions.problem_POST });
+                return;
+            }
             isValid &&= (problem.problem_body!.length > 0 || problem.problem_type! == 1);
-            problem.choices.forEach(e => {isValid &&= e.choice_text.length > 0});
+            problem.choices.forEach(e => { isValid &&= e.choice_text.length > 0 });
         } else if (req.method == "PUT") {
-            const problem: problem = JSON.parse(req.body);
+            let problem: problem
+            if (req.headers["content-type"] == "application/json") {
+                problem = req.body as problem;
+            } else {
+                problem = JSON.parse(req.body);
+            }
             validate = new ajv().compile(problemFormJson.definitions.problem_PUT);
             isValid = await validate(problem);
+            if (!isValid) {
+                res.status(400).json({ "error": "failure to validate json", "shema": problemFormJson.definitions.problem_PUT });
+                return;
+            }
             isValid &&= problem.problem_body!.length > 0;
-            problem.choices.forEach(e => {isValid &&= e.choice_text.length > 0});
+            problem.choices.forEach(e => { isValid &&= e.choice_text.length > 0 });
         } else if (req.method == "DELETE") {
-            const problemList: string[] = JSON.parse(req.body);
+            let problemList: string[];
+            if (req.headers["content-type"] == "application/json") {
+                problemList = req.body as string[];
+            } else {
+                problemList = JSON.parse(req.body);
+            }
             isValid = await AjvValidater(problemFormJson.definitions.problem_DELETE, problemList);
+            if (!isValid) {
+                res.status(400).json({ "error": "failure to validate json", "shema": problemFormJson.definitions.problem_PUT });
+                return;
+            }
         }
 
         if (isValid) {
@@ -61,10 +88,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         hash: problem.subjectHash!
                     }
                 }).then(e => subject_id = e!.id)
-                .catch(err => {
-                    res.status(500).json({"error" : err});
-                    console.log(err);
-                });
+                    .catch(err => {
+                        res.status(500).json({ "error": err });
+                        console.log(err);
+                    });
                 let problemRec: t_problems;
                 await db.t_problems.create({
                     id: null,
@@ -75,11 +102,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     problem_body: problem.problem_body,
                     problem_image_url: problem.problemImageURL
                 }).then(r => problemRec = r)
-                .catch(err => {
-                    res.status(500).json({"error" : err});
-                    console.log(err);
-                    throw err;
-                });
+                    .catch(err => {
+                        res.status(500).json({ "error": err });
+                        console.log(err);
+                        throw err;
+                    });
                 await db.t_choices.bulkCreate(
                     problem.choices.map(e => {
                         return {
@@ -91,11 +118,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         }
                     })
                 ).catch(err => {
-                    res.status(500).json({"error" : err});
+                    res.status(500).json({ "error": err });
                     console.log(err);
                     throw err;
                 });
-                res.status(200).json({message: "ok"});
+                res.status(200).json({ message: "ok" });
             } else if (req.method == "PUT") {
                 // update t_problem
                 let problemId: number;
@@ -138,7 +165,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         problem_id: problemId!
                     }
                 });
-                res.status(200).json({message: "ok"});
+                res.status(200).json({ message: "ok" });
             } else if (req.method == "DELETE") {
                 const problemList: string[] = JSON.parse(req.body);
                 await db.t_problems.destroy({
@@ -148,10 +175,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         }
                     }
                 });
-                res.status(200).json({message: "ok"});
+                res.status(200).json({ message: "ok" });
             }
-        }else{
-            res.status(400).json({error: validate!.errors||"validation falure"});
+        } else {
+            res.status(400).json({
+                error: validate!.errors || "validation falure",
+                schema: problemFormJson
+            });
         }
     } else {
         res.json({ message: "Unauthorise" })
