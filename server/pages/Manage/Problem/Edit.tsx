@@ -167,6 +167,8 @@ const Edit = (props: IProps) => {
                                 });
                         }
                     }
+                    console.log(choicesList);
+                    
                     await fetch("/api/Problem", {
                         method: "PUT",
                         body: JSON.stringify({
@@ -177,6 +179,19 @@ const Edit = (props: IProps) => {
                             choices: choicesList,
                             problemImageURL: problemImageURL
                         })
+                    }) .then(async res => {
+                        if (!res.ok) {
+                            console.log(`status code: ${res.status}`);
+                            alert(`status code: ${res.status}`);
+                            res.text().then(resJson => {
+                                console.log(resJson);
+                                alert(resJson);
+                            })
+                        } else {
+                            problemImageURL = (await res.json()).url!;
+                            console.log(problemImageURL);
+
+                        }
                     }).catch(err => {
                         console.log(err);
                         alert(err);
