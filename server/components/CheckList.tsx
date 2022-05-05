@@ -6,7 +6,7 @@ const CheckList = (props: { checkedList: IMarkList }) => {
     const [checked, setChecked] = useState(true);
     return (
         <ListItem>
-            <ListItemText primary={props.checkedList.problemBody} />
+            <ListItemText primary={props.checkedList.problem_body} />
             <ListItemSecondaryAction>
                 <Checkbox
                     checked={checked}

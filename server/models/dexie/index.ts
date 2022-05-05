@@ -44,11 +44,7 @@ export interface IAnswerList extends IProblem{
 };
 type answerList = Table<IAnswerList,string>
 
-// export interface IMarkList{
-//     hash: string,
-//     problemBody: string,
-//     isCollect: boolean
-// }
+export interface IMarkList extends IAnswerList{}
 type MarkList = Table<IAnswerList,string>
 
 export interface ITheme{
