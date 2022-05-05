@@ -48,6 +48,7 @@ export interface t_problems extends Model {
     problem_type : number;
     answer_type : number;
     problem_body : string;
+    problem_image_url : string;
     readonly created_at: date;
     readonly updated_at: date;
 }
@@ -100,6 +101,7 @@ type t_choiceModelStatic = typeof Model & {
 type t_imageModelStatic = typeof Model & {
     new (values?: object, options?: BuildOptions): t_images;
 }
+
 /* --------------- */
 
 interface DBModel {

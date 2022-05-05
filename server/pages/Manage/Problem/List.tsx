@@ -45,7 +45,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                     problem_body : rr["t_problems.problem_body"],
                     subject_id : null,
                     answer_type : null,
-                    problem_type: null
+                    problem_type: rr["t_problems.problem_type"],
+                    problem_image_url: rr["t_problems.problem_image_url"],
                 });
             }
         });

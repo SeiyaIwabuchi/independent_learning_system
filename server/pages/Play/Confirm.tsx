@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import OuterFrame from "../../components/OuterFrame";
 import ReviewCommon from "../../components/ReviewCommon";
-import { dexieDb, IChoices, IProblem_hash_order } from "../../models/dexie";
+import { dexieDb, IChoices, IProblem, IProblem_hash_order } from "../../models/dexie";
 
 function Space() {
     return <>&nbsp;</>;
@@ -30,6 +30,7 @@ const Review = () => {
     const [isMatch, setIsMatch] = useState<boolean>(false);
     const [subjectName, setSubjectName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [problem, setProblem] = useState<IProblem>();
     const handleClick = async () => {
         let problemHashList: string[] = [];
         let currentProblemId = -1;
@@ -50,9 +51,10 @@ const Review = () => {
     };
     // useEffectの第２引数には変数（ステートフック）を記述する。変数が更新されるとuseEffectに設定した関数が呼び出される。
     useEffect(() => {
-        const interval = setInterval(()=>setIsLoading(true),500);
+        const interval = setInterval(() => setIsLoading(true), 500);
         (async () => {
             const array = (await dexieDb.problem.toArray());
+            setProblem(array[0]);
             setProblemBody(array[0].problem_body.split("\n")
                 .map((v, i, a) => (
                     <>
@@ -79,18 +81,16 @@ const Review = () => {
                 .forEach(e => {
                     isCollectResult = isCollectResult && e;
                 });
-            await dexieDb.answerList.add({
-                hash: array[0].hash,
-                problemBody: array[0].problem_body,
+            dexieDb.answerList.add(Object.assign({
                 isCollect: isCollectResult,
-            });
+            }, array[0]));
             setIsMatch(isCollectResult);
             clearInterval(interval);
             setIsLoading(false);
         })();
     }, []);
     return (
-        <ReviewCommon appbar={{ title: "答え合わせ" }} snackBar={{}} loading_circle={{state:isLoading}}>
+        <ReviewCommon appbar={{ title: "答え合わせ" }} snackBar={{}} loading_circle={{ state: isLoading }}>
             <div>
                 <Typography variant="body2">{subjectName}</Typography>
                 <div
@@ -108,7 +108,12 @@ const Review = () => {
                             padding: "3px",
                             marginBottom: "20px"
                         }}>
-                        <Typography variant="body1">{problemBody}</Typography>
+                        {
+                            (problem || {}).problem_type == 0 ?
+                                <Typography variant="body1">{problemBody}</Typography>
+                                :
+                                <img src={(problem || {}).problem_image_url || "http://via.placeholder.com/500x300"} width="100%"></img>
+                        }
                     </div>
                     <Typography variant="h5" align="center" color="secondary" style={{ marginBottom: "10px" }}>
                         {
