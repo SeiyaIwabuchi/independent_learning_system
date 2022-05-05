@@ -165,10 +165,6 @@ const Edit = (props: IProps) => {
                                     console.log(err);
                                     alert(err);
                                 });
-                        } else {
-                            setSnackBarMsg("問題画像を選択してください。");
-                            setSnackBarState(true);
-                            return;
                         }
                     }
                     await fetch("/api/Problem", {

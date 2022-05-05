@@ -76,7 +76,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         if (isValid) {
-            const problem: problem = JSON.parse(req.body);
+            let problem: problem;
+            if (req.headers["content-type"] == "application/json") {
+                problem = req.body as problem;
+            } else {
+                problem = JSON.parse(req.body);
+            }
             if (req.method == "POST") {
                 console.log(problem);
                 const hash = crypto.createHash("sha256")
