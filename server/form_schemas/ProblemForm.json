@@ -140,10 +140,6 @@
                                 "type": "number",
                                 "title": "id"
                             },
-                            "problem_id": {
-                                "type": "number",
-                                "title": "problem_id"
-                            },
                             "choice_text": {
                                 "type": [
                                     "null",
@@ -166,8 +162,7 @@
                         "required": [
                             "choice_text",
                             "collect_flag",
-                            "id",
-                            "problem_id"
+                            "id"
                         ]
                     },
                     "title": "choices"
