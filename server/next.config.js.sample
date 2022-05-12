@@ -1,0 +1,16 @@
+module.exports = {
+    env: {
+      /* DEV_ENVはデータベースのdialectおよび接続文字列に影響します。
+       school : 内臓SQlite,
+       home : MySQL
+
+       IMAGE_SERVER : 画像の保存と配信を行っているサーバのアドレスを指定してください。
+       IMAGE_SERVER_AUTH : 画像サーバに対して書き込みを伴う操作を行う場合に認証が必要です。
+      サーバで設定した共通キーワードを入力してください.
+
+      */
+      DEV_ENV: 'school', // school or home see config/config.json
+      IMAGE_SERVER: '0.0.0.0:1234',
+      IMAGE_SERVER_AUTH: 'token'
+    },
+  }
