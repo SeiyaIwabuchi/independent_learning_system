@@ -28,8 +28,15 @@ const ReviewResultListElemet = (props: IElemetPorps) => {
     const [checked, setChecked] = useState(false);
     useEffect(() => {
         dexieDb.MarkList.get(props.resultProblem.hash)
-            .then(e => setChecked(e != undefined));
-    });
+            .then(e => {
+                if(e != undefined){
+                    setChecked(true);
+                }else if(!props.resultProblem.isCollect){
+                    dexieDb.MarkList.add(props.resultProblem);
+                    setChecked(true)
+                }
+            });
+    },[]);
     return (
         <>
             <ListItem
