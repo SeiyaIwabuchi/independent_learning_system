@@ -1,11 +1,44 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Checkbox } from "@material-ui/core";
 import React, { useState } from "react";
 import { dexieDb, IMarkList } from "../models/dexie";
+import router from "next/router";
 
 const CheckList = (props: { checkedList: IMarkList }) => {
     const [checked, setChecked] = useState(true);
+    const handle = async (problemHash : string[]) => {
+        let nextProblemNumber = 0;
+    
+        let i = 0;
+        //問題リストクリア
+        await dexieDb.problem_hash_order.clear(); 
+    
+        //引数と渡されたhashListをコピーする
+        const problemHashList = problemHash.slice();
+        // データベースに番号と一緒にハッシュを追加していく。
+        await dexieDb.problem_hash_order.bulkAdd(
+            problemHashList.map(e => { return { id: i++, hash: e } })
+        );
+        await dexieDb.currentProblem.clear();
+        await dexieDb.currentProblem.add({ id: 0 });
+        await dexieDb.answerList.clear();
+    
+        let nextProblemHash = "";
+        if ((await dexieDb.problem_hash_order.get(nextProblemNumber)) === undefined) {
+            //１番の問題がない時は教科リストに飛ぶ
+            router.push(`/Play/SubjectList`);
+        } else {
+            nextProblemHash = (await dexieDb.problem_hash_order.get(nextProblemNumber))!.hash;
+            router.push(`/Play/Review?problemHash=${nextProblemHash}`);
+        }
+    };
     return (
-        <ListItem key={props.checkedList.hash}>
+        <ListItem 
+        key={props.checkedList.hash}
+        component="a"
+        href="#"
+        onClick={()=>{handle([props.checkedList.hash])}}
+        style={{color:"white"}}
+        >
             {
                 props.checkedList.problem_type == 0 ?
                 <ListItemText primary={props.checkedList.problem_body} />
