@@ -141,6 +141,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         e!.problem_body = problem.problem_body!;
                         e!.problem_type = problem.problem_type!;
                         e!.answer_type = problem.answer_type!;
+                        e!.problem_image_url = problem.problemImageURL!;
                         e!.save();
                         problemId = e!.id;
                     });

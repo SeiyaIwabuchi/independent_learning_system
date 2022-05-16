@@ -233,7 +233,7 @@ const Edit = (props: IProps) => {
                                             setLocalFile(event.target.files[0]);
                                         }}
                                     />
-                                    <Button variant="contained" color="primary" component="span" style={{ width: "100%" }}>画像追加</Button>
+                                    <Button variant="contained" color="primary" component="span" style={{ width: "100%" }}>画像変更</Button>
                                 </label>
                                 <div style={{ margin: "15px" }}></div>
                                 <img src={localFile ? URL.createObjectURL(localFile) : props.problem.problem_image_url || "http://via.placeholder.com/500x300"}></img>

@@ -28,8 +28,15 @@ const ReviewResultListElemet = (props: IElemetPorps) => {
     const [checked, setChecked] = useState(false);
     useEffect(() => {
         dexieDb.MarkList.get(props.resultProblem.hash)
-            .then(e => setChecked(e != undefined));
-    });
+            .then(e => {
+                if(e != undefined){
+                    setChecked(true);
+                }else if(!props.resultProblem.isCollect){
+                    dexieDb.MarkList.add(props.resultProblem);
+                    setChecked(true)
+                }
+            });
+    },[]);
     return (
         <>
             <ListItem
@@ -47,7 +54,7 @@ const ReviewResultListElemet = (props: IElemetPorps) => {
                                 </>
                             ))}</Typography>
                         :
-                        <img src={props.resultProblem.problem_image_url || "http://via.placeholder.com/500x300"} width="100%"></img>
+                        <img src={props.resultProblem.problem_image_url || "http://via.placeholder.com/500x300"} width="90%" height="auto"></img>
                 }
 
                 <div style={{ marginRight: "5px" }}>

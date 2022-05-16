@@ -131,6 +131,10 @@
                     "type": "string",
                     "title": "subjectHash"
                 },
+                "problemImageURL": {
+                    "type": "string",
+                    "title": "problemImageURL"
+                },
                 "choices": {
                     "type": "array",
                     "items": {

@@ -41,7 +41,7 @@ function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-const SubjectList = (props: { problemHashList: string[], subjectId: number }) => {
+const Option = (props: { problemHashList: string[], subjectId: number }) => {
     const [isShuffle, setIsShuffle] = useState(false);
     const [isCanBeContinued, setIsCanBeContinued] = useState(false);
     const [isContinue, setIsContinue] = useState(false);
@@ -144,4 +144,4 @@ const SubjectList = (props: { problemHashList: string[], subjectId: number }) =>
     )
 }
 
-export default SubjectList;
+export default Option;
