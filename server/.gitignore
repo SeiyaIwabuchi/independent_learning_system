@@ -40,3 +40,5 @@ next.config.js
 sqlitDatabase/*
 
 public/uploads/*
+
+work/*
