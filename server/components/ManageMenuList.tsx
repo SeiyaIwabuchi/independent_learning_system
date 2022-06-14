@@ -11,8 +11,8 @@ export interface IElemetPorps{
 
 const ManageMenuListElemet = (props : IElemetPorps) => {
     return (
-        <>
-            <ListItem button={true} component="a" href={`${props.destinationURL  || "#" }`} key={props.primaryText}>
+        <Link href={`${props.destinationURL  || "#" }`}>
+            <ListItem button={true} key={props.primaryText}>
                 <ListItemText
                     primary={props.primaryText}
                     secondary={props.secondaryText || null}
@@ -21,7 +21,7 @@ const ManageMenuListElemet = (props : IElemetPorps) => {
                     <ChevronRightIcon />
                 </ListItemSecondaryAction>
             </ListItem>
-        </>
+        </Link>
     );
 };
 

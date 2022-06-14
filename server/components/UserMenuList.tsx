@@ -1,4 +1,5 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
+import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";
 import { UserForm } from "../form_schemas/ts/UserForm";
 
@@ -16,11 +17,10 @@ export interface IElemetPorps {
 
 const UserMenuListElemet = (props: IElemetPorps) => {
     return (
-        <>
+        <Link href={`/Manage/User/Edit?&id=${props.user.id}`}>
             <ListItem
                 button={true}
                 component="a"
-                href={`/Manage/User/Edit?&id=${props.user.id}`}
                 key={props.user.id}
             >
                 <ListItemText
@@ -46,7 +46,7 @@ const UserMenuListElemet = (props: IElemetPorps) => {
                     }
                 </ListItemSecondaryAction>
             </ListItem>
-        </>
+        </Link>
     );
 };
 

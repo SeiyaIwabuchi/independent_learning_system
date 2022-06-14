@@ -12,7 +12,7 @@ const toggleTheme = () => {
             else
                 dexieDb.Theme.update(array[0].themeType,{themeType:"dark"});
         })
-        window.location.href = "/Play/SubjectList";
+        window.location.href = "/Play/SubjectList"; //FIXME Unhandled base url
     },[]);
     return (
         <ReviewCommon appbar={{ title: "答え合わせ" }} snackBar={{}}>
