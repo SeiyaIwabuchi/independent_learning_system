@@ -1,4 +1,5 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox, Typography } from "@material-ui/core";
+import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";
 import { ProblemForm } from "../form_schemas/ts/ProblemForm";
 
@@ -35,11 +36,9 @@ function Rlw(props: { str: string }) {
 
 const ProblemMenuListElemet = (props: IElemetPorps) => {
     return (
-        <>
+        <Link href={`/Manage/Problem/Edit?problemHash=${props.problem.hash}&subjectHash=${props.subject.hash}`}>
             <ListItem
                 button={true}
-                component="a"
-                href={`/Manage/Problem/Edit?problemHash=${props.problem.hash}&subjectHash=${props.subject.hash}`}
                 key={props.problem.hash}
             >
                 {
@@ -74,7 +73,7 @@ const ProblemMenuListElemet = (props: IElemetPorps) => {
                     />
                 </ListItemSecondaryAction>
             </ListItem>
-        </>
+        </Link>
     );
 };
 

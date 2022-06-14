@@ -1,4 +1,5 @@
 import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbox } from "@material-ui/core";
+import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";
 import { SubjectForm } from "../form_schemas/ts/SubjectForm";
 
@@ -16,11 +17,9 @@ export interface IElemetPorps{
 
 const SubjectMenuListElemet = (props : IElemetPorps) => {
     return (
-        <>
+        <Link href={`/Manage/Subject/Edit?&hash=${props.subject.hash}`}>
             <ListItem 
                 button={true} 
-                component="a" 
-                href={`/Manage/Subject/Edit?&hash=${props.subject.hash}`}
                 key={props.subject.hash}
             >
                 <ListItemText
@@ -42,7 +41,7 @@ const SubjectMenuListElemet = (props : IElemetPorps) => {
                     />
                 </ListItemSecondaryAction>
             </ListItem>
-        </>
+        </Link>
     );
 };
 

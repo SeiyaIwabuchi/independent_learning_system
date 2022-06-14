@@ -2,22 +2,21 @@ import { ListItem, ListItemText, ListItemSecondaryAction, Divider, List, Checkbo
 import React, { Dispatch, SetStateAction } from "react";
 import { SubjectForm } from "../form_schemas/ts/SubjectForm";
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Link from "next/link";
 
-export interface IElemetPorps{
-    subject:{
-        hash : string,
-        name : string,
-        description? : string,
+export interface IElemetPorps {
+    subject: {
+        hash: string,
+        name: string,
+        description?: string,
     },
 }
 
-const SubjectMenuListElemet = (props : IElemetPorps) => {
+const SubjectMenuListElemet = (props: IElemetPorps) => {
     return (
-        <>
-            <ListItem 
-                button={true} 
-                component="a" 
-                href={`/Play/Option?subjectHash=${props.subject.hash}`}
+        <Link href={`/Play/Option?subjectHash=${props.subject.hash}`}>
+            <ListItem
+                button={true}
                 key={props.subject.hash}
             >
                 <ListItemText
@@ -28,21 +27,21 @@ const SubjectMenuListElemet = (props : IElemetPorps) => {
                     <ChevronRightIcon />
                 </ListItemSecondaryAction>
             </ListItem>
-        </>
+        </Link>
     );
 };
 
 const PlaySubjectMenuList = (
-    props : {
-        menuList : SubjectForm[],
+    props: {
+        menuList: SubjectForm[],
     }) => {
-    const menu : JSX.Element[] = [];
-    for(let i=0;i<props.menuList.length;i++){
+    const menu: JSX.Element[] = [];
+    for (let i = 0; i < props.menuList.length; i++) {
         let prop = props.menuList[i];
         menu.push(
-            <SubjectMenuListElemet subject={prop} key={prop.hash}/>
+            <SubjectMenuListElemet subject={prop} key={prop.hash} />
         );
-        if(i < props.menuList.length -1)
+        if (i < props.menuList.length - 1)
             menu.push(<Divider />);
     }
     return (
