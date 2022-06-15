@@ -49,10 +49,10 @@ let LoginForm = (props : {preSessionId : string}) => {
                 padding : "20px"
             }}>
                 <Form
-                    action="/api/Login"
+                    action={`${process.env.basePath}/api/Login`}
                     schema={LoginFormSchema}
                     submitButtonName="ログイン"
-                    dataDest="/api/Login"
+                    dataDest={`${process.env.basePath}/api/Login`}
                     onApiRes={(json: LoginFormResponseShcema) => {
                         if (json.sessionId != "Unauthorised") {
                             router.push(`/Manage/SetCookie?${SessionId(json.sessionId)}&goto=${"/Manage/Top"}`);
