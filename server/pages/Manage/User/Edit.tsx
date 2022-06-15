@@ -37,7 +37,7 @@ interface IProps{
 const Edit = (props : IProps) => {
     const form = useState(props.user);
     const onCommitButton = async () => {
-        await fetch("/api/User",{
+        await fetch(`${process.env.basePath}/api/User`,{
             method : "put",
             body : JSON.stringify(form[0])
         }).then(() => {

@@ -171,7 +171,7 @@ const Edit = (props: IProps) => {
                     }
                     console.log(choicesList);
                     
-                    await fetch("/api/Problem", {
+                    await fetch(`${process.env.basePath}/api/Problem`, {
                         method: "PUT",
                         body: JSON.stringify({
                             hash: props.problem.hash,

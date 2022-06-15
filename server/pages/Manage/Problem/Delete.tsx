@@ -57,7 +57,7 @@ const Delete = (props: ISessionId & { problemList: { "hash": string, "problem_bo
                     style={{ width: "100%" }}
                     onClick={async () => {
                         await fetch(
-                            "/api/Problem",
+                            `${process.env.basePath}/api/Problem`,
                             {
                                 method : "delete",
                                 body : JSON.stringify(props.problemList.map(e => e.hash))

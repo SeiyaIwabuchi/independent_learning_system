@@ -132,7 +132,7 @@ const Edit = (props: IProps) => {
                     }
 
                     if (problemBody.length > 0 || problemType == 1) {  //validation
-                        await fetch("/api/Problem", {
+                        await fetch(`${process.env.basePath}/api/Problem`, {
                             method: "POST",
                             body: JSON.stringify({
                                 subjectHash: props.subjectHash,
