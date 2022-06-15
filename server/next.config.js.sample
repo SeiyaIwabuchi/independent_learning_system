@@ -1,4 +1,6 @@
 module.exports = {
+  /* リバースプロキシを使用する際に適切に設定してください。 */
+    basePath: '/',
     env: {
       /* DEV_ENVはデータベースのdialectおよび接続文字列に影響します。
        school : 内臓SQlite,
