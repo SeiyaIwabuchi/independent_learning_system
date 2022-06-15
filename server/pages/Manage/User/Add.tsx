@@ -22,7 +22,7 @@ const Add = (props : IProps) => {
     // title: string; leftButton?: Element | undefined; rightButton?: Element | undefined;
     
     const onAddButtonClicked = async () => {
-            await fetch("/api/User",{
+            await fetch(`${process.env.basePath}/api/User`,{
                 method : "post",
                 body : JSON.stringify(form[0])
             }).then(() => {

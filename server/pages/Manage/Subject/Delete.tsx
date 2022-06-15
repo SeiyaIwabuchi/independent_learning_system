@@ -57,7 +57,7 @@ const Delete = (props: ISessionId & { subjectList: { "hash": string, "name": str
                     style={{ width: "100%" }}
                     onClick={async () => {
                         await fetch(
-                            "/api/Subject",
+                            `${process.env.basePath}/api/Subject`,
                             {
                                 method : "delete",
                                 body : JSON.stringify(props.subjectList)
